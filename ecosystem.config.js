@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-        name: "esima-core",
+        name: "xuigod-core",
         cwd: "./apps/core", 
         script: "./dist/server.js",
         instances: 1, 
@@ -18,7 +18,7 @@ module.exports = {
         merge_logs: true
     },
     {
-      name: "esima-panel",
+      name: "xuigod-panel",
       cwd: "./apps/panel",
       script: "node_modules/next/dist/bin/next",
       args: "start",
