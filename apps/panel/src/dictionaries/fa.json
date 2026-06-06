@@ -122,6 +122,24 @@
       "totalUsage": "مصرف کل",
       "serverErrors": "برخی سرورها بارگذاری نشدند"
     },
+    "adminStats": {
+      "totalClients": "همه کلاینت‌ها",
+      "sellerUsers": "کاربران فروشنده",
+      "activeClients": "کلاینت‌های فعال",
+      "expiredClients": "کلاینت‌های منقضی",
+      "totalUsage": "مصرف کل",
+      "serverTraffic": "ترافیک بر اساس سرور",
+      "serverErrors": "برخی سرورها بارگذاری نشدند",
+      "table": {
+        "server": "سرور",
+        "clients": "کلاینت‌ها",
+        "active": "فعال",
+        "expired": "منقضی",
+        "download": "دانلود",
+        "upload": "آپلود",
+        "usage": "مصرف"
+      }
+    },
     "orgSelector": {
       "title": "انتخاب فضای کاری",
       "description": "شما در چندین سازمان یا شعبه عضو هستید. برای ورود به پنل مدیریت، لطفاً فضایی که قصد فعالیت در آن را دارید انتخاب کنید.",
@@ -359,7 +377,8 @@
       "firstUse": "{days} روز پس از اولین استفاده"
     },
     "qr": {
-      "title": "QR کد اشتراک"
+      "title": "QR کد اشتراک",
+      "copyTooltip": "کپی لینک اشتراک"
     },
     "form": {
       "titleCreate": "افزودن کلاینت XUI",

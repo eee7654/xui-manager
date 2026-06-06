@@ -118,6 +118,24 @@
       "totalUsage": "Total usage",
       "serverErrors": "Some servers could not be loaded"
     },
+    "adminStats": {
+      "totalClients": "All clients",
+      "sellerUsers": "Seller users",
+      "activeClients": "Active clients",
+      "expiredClients": "Expired clients",
+      "totalUsage": "Total usage",
+      "serverTraffic": "Traffic by server",
+      "serverErrors": "Some servers could not be loaded",
+      "table": {
+        "server": "Server",
+        "clients": "Clients",
+        "active": "Active",
+        "expired": "Expired",
+        "download": "Download",
+        "upload": "Upload",
+        "usage": "Usage"
+      }
+    },
     "orgSelector": {
       "title": "Select Workspace",
       "description": "You are a member of multiple organizations or branches. Please select the workspace you wish to access.",
@@ -354,7 +372,8 @@
       "firstUse": "{days} days after first use"
     },
     "qr": {
-      "title": "Subscription QR code"
+      "title": "Subscription QR code",
+      "copyTooltip": "Copy subscription link"
     },
     "form": {
       "titleCreate": "Add XUI client",

@@ -1,5 +1,8 @@
 import { randomUUID } from 'crypto';
 import { ForbiddenError, subject } from '@casl/ability';
+import Role from '@/db/models/core/Role.js';
+import User from '@/db/models/core/User.js';
+import UserOrganizationRole from '@/db/models/core/UserOrganizationRole.js';
 import XuiServer from '@/db/models/core/XuiServer.js';
 import { ErrorCodes, SuccessCodes } from '@/constants/responseCodes.js';
 import { AppError } from '@/lib/AppError.js';
@@ -108,6 +111,30 @@ const getClientExpiryState = (client) => {
     return expiryTime < Date.now() ? 'expired' : 'active';
 };
 
+const readCount = (row) => Number(row?.total || row?.count || 0);
+
+const getSellerUsersCount = async (req) => {
+    const sellerRole = await Role.query().findOne({ name: 'seller' });
+    if (!sellerRole) return 0;
+
+    if (req.orgId) {
+        const row = await UserOrganizationRole.query()
+            .where({
+                organization_id: req.orgId,
+                role_id: sellerRole.id
+            })
+            .countDistinct('user_id as total')
+            .first();
+        return readCount(row);
+    }
+
+    const row = await User.query()
+        .where('role_id', sellerRole.id)
+        .count('id as total')
+        .first();
+    return readCount(row);
+};
+
 export const fetch = async (req, res) => {
     ForbiddenError.from(req.ability).throwUnlessCan('read', 'XuiClient');
     const { page = 1, limit = 10, search = '', server_id } = req.query;
@@ -163,7 +190,9 @@ export const stats = async (req, res) => {
         expired_clients: 0,
         total_usage: 0,
         total_upload: 0,
-        total_download: 0
+        total_download: 0,
+        seller_users: isSeller(req) ? null : await getSellerUsersCount(req),
+        servers: []
     };
 
     for (const server of servers) {
@@ -172,17 +201,41 @@ export const stats = async (req, res) => {
             const visibleClients = ownerUsername
                 ? serverClients.filter(client => clientBelongsToUsername(server, client, ownerUsername))
                 : serverClients;
+            const serverSummary = {
+                server_id: server.id,
+                server_name: server.name,
+                inbound_id: server.inbound_id,
+                inbound_tag: server.inbound_tag,
+                total_clients: 0,
+                active_clients: 0,
+                expired_clients: 0,
+                total_usage: 0,
+                total_upload: 0,
+                total_download: 0
+            };
             for (const client of visibleClients) {
                 summary.total_clients += 1;
-                summary.total_usage += Number(client.traffic_used || 0);
-                summary.total_upload += Number(client.traffic_up || 0);
-                summary.total_download += Number(client.traffic_down || 0);
+                serverSummary.total_clients += 1;
+
+                const trafficUsed = Number(client.traffic_used || 0);
+                const trafficUp = Number(client.traffic_up || 0);
+                const trafficDown = Number(client.traffic_down || 0);
+                summary.total_usage += trafficUsed;
+                summary.total_upload += trafficUp;
+                summary.total_download += trafficDown;
+                serverSummary.total_usage += trafficUsed;
+                serverSummary.total_upload += trafficUp;
+                serverSummary.total_download += trafficDown;
+
                 if (getClientExpiryState(client) === 'expired') {
                     summary.expired_clients += 1;
+                    serverSummary.expired_clients += 1;
                 } else {
                     summary.active_clients += 1;
+                    serverSummary.active_clients += 1;
                 }
             }
+            summary.servers.push(serverSummary);
         } catch (error) {
             errors.push({
                 server_id: server.id,

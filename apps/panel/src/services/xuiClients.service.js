@@ -45,6 +45,7 @@ export const useCreate = () => {
         }),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: XUI_CLIENT_KEYS.lists() });
+            queryClient.invalidateQueries({ queryKey: [...XUI_CLIENT_KEYS.all, 'stats'] });
         }
     });
 };
@@ -59,6 +60,7 @@ export const useUpdate = () => {
         }),
         onSuccess: (_, variables) => {
             queryClient.invalidateQueries({ queryKey: XUI_CLIENT_KEYS.lists() });
+            queryClient.invalidateQueries({ queryKey: [...XUI_CLIENT_KEYS.all, 'stats'] });
             queryClient.invalidateQueries({ queryKey: XUI_CLIENT_KEYS.detail(variables.server_id, variables.id) });
         }
     });
@@ -73,6 +75,7 @@ export const useDelete = () => {
         }),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: XUI_CLIENT_KEYS.lists() });
+            queryClient.invalidateQueries({ queryKey: [...XUI_CLIENT_KEYS.all, 'stats'] });
         }
     });
 };

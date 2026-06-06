@@ -88,6 +88,28 @@ const XuiClientsClient = () => {
         });
     }, [deleteClient, dict, message]);
 
+    const copySubscriptionUrl = useCallback(async (url) => {
+        if (!url) return;
+        try {
+            if (navigator.clipboard?.writeText) {
+                await navigator.clipboard.writeText(url);
+            } else {
+                const textarea = document.createElement('textarea');
+                textarea.value = url;
+                textarea.setAttribute('readonly', '');
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+            }
+            message.success(dict.common.copied);
+        } catch {
+            message.error(dict.errors?.GEN_UNKNOWN_ERROR || 'Copy failed');
+        }
+    }, [dict, message]);
+
     const columns = useMemo(() => [
         {
             title: dict.xuiClients.table.client,
@@ -320,7 +342,16 @@ const XuiClientsClient = () => {
             >
                 {qrClient?.subscription_url && (
                     <Flex vertical align="center" gap="middle">
-                        <QRCode value={qrClient.subscription_url} size={220} />
+                        <Tooltip title={dict.xuiClients.qr.copyTooltip}>
+                            <button
+                                type="button"
+                                aria-label={dict.xuiClients.qr.copyTooltip}
+                                className="border-0 bg-transparent p-0 cursor-pointer leading-none"
+                                onClick={() => copySubscriptionUrl(qrClient.subscription_url)}
+                            >
+                                <QRCode value={qrClient.subscription_url} size={220} />
+                            </button>
+                        </Tooltip>
                         <Text className="text-textMuted text-xs text-center break-all" dir="ltr">
                             {qrClient.subscription_url}
                         </Text>
