@@ -12,16 +12,18 @@ export default async function PanelLayout({ children, params }) {
   const dir = lang === 'fa' ? 'rtl' : 'ltr';
   const dict = await getDictionary(lang);
   const sessionData = await getSessionData();
-  if (!sessionData) {
+  if (!sessionData || !sessionData.user) {
     redirect(`/${lang}/auth/login?reason=expired`);
   }
+  const isMultiOrg = sessionData.isMultiOrg ?? process.env.NEXT_PUBLIC_IS_MULTI_ORG === 'true';
   return (
     <div className="panel-wrapper min-h-screen flex">
       <AppHydrator
         rules={sessionData.rules}
         user={{
           ...sessionData.user,
-          memberships: sessionData.memberships || []
+          isMultiOrg,
+          memberships: isMultiOrg ? sessionData.memberships || [] : []
         }}
         lang={lang}
         dir={dir}

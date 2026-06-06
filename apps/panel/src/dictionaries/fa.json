@@ -36,6 +36,10 @@
     "ORG_NOT_FOUND": "سازمان یا شعبه مورد نظر یافت نشد.",
     "ORG_NOT_MEMBER": "شما عضو این سازمان یا شعبه نیستید.",
     "ORG_NOT_ENOUGH_ACCESS": "شما به یک یا چند سازمانِ درخواستی دسترسی ندارید.",
+    "XUI_SERVER_NOT_FOUND": "سرور XUI مورد نظر یافت نشد.",
+    "XUI_SERVER_CAPACITY_EXHAUSTED": "هیچ سرور XUI فعالی ظرفیت آزاد برای کلاینت جدید ندارد.",
+    "XUI_CLIENT_NOT_FOUND": "کلاینت XUI مورد نظر یافت نشد.",
+    "XUI_WRITE_LOCK_TIMEOUT": "یک عملیات نوشتن دیگر روی این اینباند در حال انجام است. کمی بعد دوباره تلاش کنید.",
     
     "INVALID_PASSWORD": "رمز عبور فعلی اشتباه است.",
     "AUTH_SESSION_EXPIRED": "نشست کاربری شما پایان یافته است. لطفا برای ادامه دوباره وارد شوید.",
@@ -49,13 +53,20 @@
     "USER_UPDATED_SUCCESSFULLY": "اطلاعات کاربر با موفقیت به‌روزرسانی شد.",
     "USER_CREATED_SUCCESSFULLY": "کاربر جدید با موفقیت ایجاد شد.",
     "ORG_CREATED_SUCCESSFULLY": "سازمان/شعبه جدید با موفقیت ایجاد شد.",
-    "ORG_UPDATED_SUCCESSFULLY": "اطلاعات سازمان/شعبه با موفقیت به‌روزرسانی شد."
+    "ORG_UPDATED_SUCCESSFULLY": "اطلاعات سازمان/شعبه با موفقیت به‌روزرسانی شد.",
+    "XUI_SERVER_CREATED_SUCCESSFULLY": "سرور XUI با موفقیت ایجاد شد.",
+    "XUI_SERVER_UPDATED_SUCCESSFULLY": "سرور XUI با موفقیت به‌روزرسانی شد.",
+    "XUI_CLIENT_CREATED_SUCCESSFULLY": "کلاینت XUI با موفقیت ایجاد شد.",
+    "XUI_CLIENT_UPDATED_SUCCESSFULLY": "کلاینت XUI با موفقیت به‌روزرسانی شد.",
+    "XUI_CLIENT_DELETED_SUCCESSFULLY": "کلاینت XUI با موفقیت حذف شد."
   },
   "pages": {
     "home": "حساب کاربری",
     "roles": "مدیریت نقش‌ها",
     "organizations":"سازمان‌ها",
     "users":"کاربران / اعضا",
+    "xuiServers": "سرورهای XUI",
+    "xuiClients": "کلاینت‌های XUI",
     "settings": "تنظیمات"
   },
   "auth": {
@@ -104,6 +115,13 @@
     }
   },
   "home":{
+    "sellerStats": {
+      "totalClients": "تعداد کل کلاینت‌ها",
+      "activeClients": "کلاینت‌های فعال",
+      "expiredClients": "کلاینت‌های منقضی",
+      "totalUsage": "مصرف کل",
+      "serverErrors": "برخی سرورها بارگذاری نشدند"
+    },
     "orgSelector": {
       "title": "انتخاب فضای کاری",
       "description": "شما در چندین سازمان یا شعبه عضو هستید. برای ورود به پنل مدیریت، لطفاً فضایی که قصد فعالیت در آن را دارید انتخاب کنید.",
@@ -269,6 +287,111 @@
       "successEdit": "اطلاعات کاربر با موفقیت بروزرسانی شد"
     },
     "empty": "هیچ کاربری در این سازمان یافت نشد."
+  },
+  "xuiServers": {
+    "pageTitle": "مدیریت سرورهای XUI",
+    "header": {
+      "desc": "تعریف اتصال پنل‌ها، اینباندها و ظرفیت برای ساخت خودکار کلاینت",
+      "searchPlaceholder": "جستجو بر اساس سرور، دامنه یا اینباند...",
+      "addBtn": "افزودن سرور"
+    },
+    "table": {
+      "name": "سرور",
+      "inbound": "اینباند",
+      "capacity": "حداکثر کلاینت",
+      "commentKey": "کلید کامنت",
+      "cloudflare": "اتصال",
+      "status": "وضعیت"
+    },
+    "form": {
+      "titleCreate": "افزودن سرور XUI",
+      "titleEdit": "ویرایش سرور XUI",
+      "name": "نام سرور",
+      "panelDomain": "دامنه پنل",
+      "panelPort": "پورت پنل",
+      "subscriptionPort": "پورت اشتراک",
+      "panelPath": "مسیر پنل",
+      "panelSsl": "استفاده از HTTPS",
+      "username": "نام کاربری پنل",
+      "password": "رمز عبور پنل",
+      "keepPassword": "برای حفظ رمز فعلی خالی بگذارید",
+      "inboundId": "شناسه اینباند",
+      "inboundTag": "تگ اینباند",
+      "maxClients": "حداکثر کلاینت",
+      "commentKey": "کلید کامنت",
+      "cloudflareClearance": "کوکی Cloudflare clearance",
+      "cloudflareUserAgent": "User-Agent کلادفلر",
+      "proxyUrl": "آدرس پروکسی",
+      "timeoutMs": "مهلت اتصال",
+      "isActive": "سرور فعال",
+      "submit": "ذخیره سرور"
+    },
+    "actions": {
+      "successCreate": "سرور XUI با موفقیت ایجاد شد",
+      "successEdit": "سرور XUI با موفقیت به‌روزرسانی شد"
+    },
+    "empty": "هنوز هیچ سرور XUI تعریف نشده است."
+  },
+  "xuiClients": {
+    "pageTitle": "مدیریت کلاینت‌های XUI",
+    "serverErrors": "برخی سرورها بارگذاری نشدند",
+    "header": {
+      "desc": "مشاهده کلاینت‌های هر فروشنده و ساخت اکانت روی اینباندهای دارای ظرفیت",
+      "searchPlaceholder": "جستجو بر اساس کلاینت، سرور یا اینباند...",
+      "addBtn": "افزودن کلاینت"
+    },
+    "table": {
+      "client": "کلاینت",
+      "seller": "فروشنده",
+      "server": "سرور",
+      "quota": "ترافیک",
+      "expiry": "انقضا",
+      "limitIp": "محدودیت IP",
+      "connection": "اتصال",
+      "status": "وضعیت"
+    },
+    "online": {
+      "online": "آنلاین",
+      "offline": "آفلاین"
+    },
+    "expiry": {
+      "unlimited": "نامحدود",
+      "firstUse": "{days} روز پس از اولین استفاده"
+    },
+    "qr": {
+      "title": "QR کد اشتراک"
+    },
+    "form": {
+      "titleCreate": "افزودن کلاینت XUI",
+      "titleEdit": "ویرایش کلاینت XUI",
+      "server": "سرور",
+      "autoServer": "انتخاب خودکار سرور دارای ظرفیت",
+      "email": "ایمیل کلاینت",
+      "subId": "شناسه اشتراک",
+      "autoSubId": "در صورت خالی بودن خودکار ساخته می‌شود",
+      "ownerUsername": "نام کاربری فروشنده",
+      "quotaGb": "حجم (GB)",
+      "expiryMode": "نوع محدودیت زمانی",
+      "expiryUnlimited": "نامحدود",
+      "expiryDate": "تاریخ ثابت",
+      "expiryFirstUse": "پس از اولین استفاده",
+      "expiryTime": "تاریخ انقضا",
+      "expiryDatePlaceholder": "انتخاب تاریخ انقضا",
+      "firstUseDays": "تعداد روز پس از اولین استفاده",
+      "limitIp": "محدودیت IP",
+      "flow": "Flow",
+      "telegramId": "شناسه تلگرام",
+      "enable": "کلاینت فعال",
+      "submit": "ذخیره کلاینت"
+    },
+    "actions": {
+      "successCreate": "کلاینت XUI با موفقیت ایجاد شد",
+      "successEdit": "کلاینت XUI با موفقیت به‌روزرسانی شد",
+      "successDelete": "کلاینت XUI با موفقیت حذف شد",
+      "showQr": "نمایش QR اشتراک",
+      "deleteConfirm": "این کلاینت از اینباند XUI حذف شود؟"
+    },
+    "empty": "هیچ کلاینت XUI یافت نشد."
   },
   "settings": {
     "pageTitle": "تنظیمات",

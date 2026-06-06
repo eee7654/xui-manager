@@ -76,6 +76,9 @@ const runSeeder = async () => {
     const Role = (await import('../db/models/core/Role')).default;
     const Organization = (await import('../db/models/core/Organization')).default;
     const UserOrganizationRole = (await import('../db/models/core/UserOrganizationRole')).default;
+    const User = (await import('../db/models/core/User')).default;
+    const db = (await import('../config/database.js')).default;
+    const database = db();
     const isMultiOrg = process.env.IS_MULTI_ORG === 'true';
     try {
         const corePermissions = [
@@ -90,7 +93,17 @@ const runSeeder = async () => {
             { action: 'suspend', resource: 'Organization', description: 'Activate or deactivate an organization' },
             { action: 'manage_members', resource: 'Organization', description: 'Add, remove, or modify user roles' },
             { action: 'manage_settings', resource: 'Organization', description: 'Access and modify advanced settings' },
-            { action: 'view_analytics', resource: 'Organization', description: 'View org-level reports and analytics' }
+            { action: 'view_analytics', resource: 'Organization', description: 'View org-level reports and analytics' },
+            { action: 'read', resource: 'XuiServer', description: 'View XUI servers and inbound capacity' },
+            { action: 'create', resource: 'XuiServer', description: 'Create XUI server connection records' },
+            { action: 'update', resource: 'XuiServer', description: 'Update XUI server connection records' },
+            { action: 'delete', resource: 'XuiServer', description: 'Delete XUI server connection records' },
+            { action: 'manage', resource: 'XuiServer', description: 'Manage all XUI server records' },
+            { action: 'read', resource: 'XuiClient', description: 'View XUI clients' },
+            { action: 'create', resource: 'XuiClient', description: 'Create XUI clients' },
+            { action: 'update', resource: 'XuiClient', description: 'Update XUI clients' },
+            { action: 'delete', resource: 'XuiClient', description: 'Delete XUI clients' },
+            { action: 'manage', resource: 'XuiClient', description: 'Manage all XUI clients' }
         ];
         console.log('   -> Inserting Core Permissions...');
         for (const perm of corePermissions) {
@@ -100,6 +113,25 @@ const runSeeder = async () => {
         let adminRole = await Role.query().findOne({ name: 'admin' });
         if (!adminRole) {
             adminRole = await Role.query().insertAndFetch({ name: 'admin', label: 'مدیر کل پلتفرم', level: 100 });
+        }
+        console.log('   -> Creating Seller Role...');
+        let sellerRole = await Role.query().findOne({ name: 'seller' });
+        if (!sellerRole) {
+            sellerRole = await Role.query().insertAndFetch({ name: 'seller', label: 'فروشنده', level: 10 });
+        }
+        const sellerPermissions = await Permission.query()
+            .where('resource', 'XuiClient')
+            .whereIn('action', ['read', 'create', 'update']);
+        for (const permission of sellerPermissions) {
+            const existing = await database('role_permissions')
+                .where({ role_id: sellerRole.id, permission_id: permission.id })
+                .first();
+            if (!existing) {
+                await database('role_permissions').insert({
+                    role_id: sellerRole.id,
+                    permission_id: permission.id
+                });
+            }
         }
         console.log('   -> Setting up Initial Admin User...');
         const adminEmail = 'admin@system.local';
@@ -124,6 +156,14 @@ const runSeeder = async () => {
              // فرض بر اینه که اگر کاربر از قبل باشه اینجا میفته
              // (باید توابع BetterAuth رو چک کنی چطور هندل میکنه)
              console.log(`ℹ️ Admin user creation skipped (maybe already exists).`);
+        }
+        if (!adminUser) {
+            adminUser = await User.query().findOne({ email: adminEmail });
+        }
+        if (!isMultiOrg && adminUser) {
+            await User.query().findById(adminUser.id).patch({ role_id: adminRole.id });
+            adminUser.role_id = adminRole.id;
+            console.log(`✅ Admin assigned direct Super Admin role.`);
         }
         if(isMultiOrg){
             console.log('   -> Setting up Default Organization...');

@@ -14,6 +14,7 @@
     "@ucast/core": "^1.10.2",
     "@ucast/sql": "^0.1.0",
     "axios": "^1.13.6",
+    "axios-cookiejar-support": "^7.0.0",
     "better-auth": "^1.5.3",
     "cors": "^2.8.5",
     "dotenv": "^17.3.1",
@@ -30,6 +31,7 @@
     "next-connect": "^1.0.0",
     "objection": "^3.1.5",
     "simple-body-validator": "^1.3.9",
+    "tough-cookie": "^6.0.1",
     "ua-parser-js": "^2.0.9",
     "ulid": "^3.0.2",
     "ultimate-express": "^2.0.13"

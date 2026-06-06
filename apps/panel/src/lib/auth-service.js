@@ -24,19 +24,22 @@ export const requireActiveOrg = async (lang) => {
   if (!sessionData || !sessionData.user) {
     redirect(`/${lang}/auth/login?reason=expired`);
   }
-  if (Array.isArray(sessionData.memberships)) {
-    if (sessionData.memberships.length === 0) {
-      redirect(`/${lang}/panel/home`);
-    }
-    const cookieStore = await cookies();
-    const activeOrgId = cookieStore.get('active_org_id')?.value;
-    if (!activeOrgId) {
-      redirect(`/${lang}/panel/home`);
-    }
-    const isValidOrg = sessionData.memberships.some(m => String(m.org_id) === String(activeOrgId));
-    if (!isValidOrg) {
-      redirect(`/${lang}/panel/home`);
-    }
+  const isMultiOrg = sessionData.isMultiOrg ?? process.env.NEXT_PUBLIC_IS_MULTI_ORG === 'true';
+  if (!isMultiOrg) {
+    return sessionData;
+  }
+  const memberships = Array.isArray(sessionData.memberships) ? sessionData.memberships : [];
+  if (memberships.length === 0) {
+    redirect(`/${lang}/panel/home`);
+  }
+  const cookieStore = await cookies();
+  const activeOrgId = cookieStore.get('active_org_id')?.value;
+  if (!activeOrgId) {
+    redirect(`/${lang}/panel/home`);
+  }
+  const isValidOrg = memberships.some(m => String(m.org_id) === String(activeOrgId));
+  if (!isValidOrg) {
+    redirect(`/${lang}/panel/home`);
   }
   return sessionData;
 };

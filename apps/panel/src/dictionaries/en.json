@@ -36,6 +36,10 @@
     "ORG_NOT_FOUND": "The requested organization or branch was not found.",
     "ORG_NOT_MEMBER": "You are a member of You are not this organization or branch.",
     "ORG_NOT_ENOUGH_ACCESS": "You do not have access to one or more of the requested organizations.",
+    "XUI_SERVER_NOT_FOUND": "The requested XUI server was not found.",
+    "XUI_SERVER_CAPACITY_EXHAUSTED": "No active XUI server has free capacity for a new client.",
+    "XUI_CLIENT_NOT_FOUND": "The requested XUI client was not found.",
+    "XUI_WRITE_LOCK_TIMEOUT": "Another write is still running for this inbound. Please try again shortly.",
     "INVALID_PASSWORD": "The current password is incorrect.",
     "AUTH_SESSION_EXPIRED": "Your session has expired. Please log in again to continue.",
 
@@ -48,13 +52,20 @@
     "USER_UPDATED_SUCCESSFULLY": "User information successfully updated.",
     "USER_CREATED_SUCCESSFULLY": "New user successfully created.",
     "ORG_CREATED_SUCCESSFULLY": "New organization/branch successfully created.",
-    "ORG_UPDATED_SUCCESSFULLY": "Organization/branch information successfully updated."
+    "ORG_UPDATED_SUCCESSFULLY": "Organization/branch information successfully updated.",
+    "XUI_SERVER_CREATED_SUCCESSFULLY": "XUI server successfully created.",
+    "XUI_SERVER_UPDATED_SUCCESSFULLY": "XUI server successfully updated.",
+    "XUI_CLIENT_CREATED_SUCCESSFULLY": "XUI client successfully created.",
+    "XUI_CLIENT_UPDATED_SUCCESSFULLY": "XUI client successfully updated.",
+    "XUI_CLIENT_DELETED_SUCCESSFULLY": "XUI client successfully deleted."
   },
   "pages": {
     "home": "Home",
     "roles": "Roles",
     "organizations":"Organizations",
     "users":"Users / Members",
+    "xuiServers": "XUI Servers",
+    "xuiClients": "XUI Clients",
     "settings": "Settings"
   },
   "auth": {
@@ -100,6 +111,13 @@
     }
   },
   "home":{
+    "sellerStats": {
+      "totalClients": "Total clients",
+      "activeClients": "Active clients",
+      "expiredClients": "Expired clients",
+      "totalUsage": "Total usage",
+      "serverErrors": "Some servers could not be loaded"
+    },
     "orgSelector": {
       "title": "Select Workspace",
       "description": "You are a member of multiple organizations or branches. Please select the workspace you wish to access.",
@@ -264,6 +282,111 @@
       "successEdit": "User information successfully updated"
     },
     "empty": "No users found in this organization."
+  },
+  "xuiServers": {
+    "pageTitle": "Manage XUI servers",
+    "header": {
+      "desc": "Define panel connections, inbounds and capacity for automatic client placement",
+      "searchPlaceholder": "Search by server, domain or inbound...",
+      "addBtn": "Add server"
+    },
+    "table": {
+      "name": "Server",
+      "inbound": "Inbound",
+      "capacity": "Max clients",
+      "commentKey": "Comment key",
+      "cloudflare": "Connection",
+      "status": "Status"
+    },
+    "form": {
+      "titleCreate": "Add XUI server",
+      "titleEdit": "Edit XUI server",
+      "name": "Server name",
+      "panelDomain": "Panel domain",
+      "panelPort": "Panel port",
+      "subscriptionPort": "Subscription port",
+      "panelPath": "Panel path",
+      "panelSsl": "Use HTTPS",
+      "username": "Panel username",
+      "password": "Panel password",
+      "keepPassword": "Leave empty to keep current password",
+      "inboundId": "Inbound ID",
+      "inboundTag": "Inbound tag",
+      "maxClients": "Maximum clients",
+      "commentKey": "Comment key",
+      "cloudflareClearance": "Cloudflare clearance cookie",
+      "cloudflareUserAgent": "Cloudflare user agent",
+      "proxyUrl": "Proxy URL",
+      "timeoutMs": "Connection timeout",
+      "isActive": "Active server",
+      "submit": "Save server"
+    },
+    "actions": {
+      "successCreate": "XUI server created successfully",
+      "successEdit": "XUI server updated successfully"
+    },
+    "empty": "No XUI servers have been defined."
+  },
+  "xuiClients": {
+    "pageTitle": "Manage XUI clients",
+    "serverErrors": "Some servers could not be loaded",
+    "header": {
+      "desc": "View seller-owned clients and create accounts on available XUI inbounds",
+      "searchPlaceholder": "Search by client, server or inbound...",
+      "addBtn": "Add client"
+    },
+    "table": {
+      "client": "Client",
+      "seller": "Seller",
+      "server": "Server",
+      "quota": "Traffic",
+      "expiry": "Expiry",
+      "limitIp": "IP limit",
+      "connection": "Connection",
+      "status": "Status"
+    },
+    "online": {
+      "online": "Online",
+      "offline": "Offline"
+    },
+    "expiry": {
+      "unlimited": "Unlimited",
+      "firstUse": "{days} days after first use"
+    },
+    "qr": {
+      "title": "Subscription QR code"
+    },
+    "form": {
+      "titleCreate": "Add XUI client",
+      "titleEdit": "Edit XUI client",
+      "server": "Server",
+      "autoServer": "Auto select available server",
+      "email": "Client email",
+      "subId": "Subscription ID",
+      "autoSubId": "Auto generated when empty",
+      "ownerUsername": "Seller username",
+      "quotaGb": "Quota (GB)",
+      "expiryMode": "Expiry limit",
+      "expiryUnlimited": "Unlimited",
+      "expiryDate": "Fixed date",
+      "expiryFirstUse": "After first use",
+      "expiryTime": "Expiry date",
+      "expiryDatePlaceholder": "Select expiry date",
+      "firstUseDays": "Days after first use",
+      "limitIp": "IP limit",
+      "flow": "Flow",
+      "telegramId": "Telegram ID",
+      "enable": "Active client",
+      "submit": "Save client"
+    },
+    "actions": {
+      "successCreate": "XUI client created successfully",
+      "successEdit": "XUI client updated successfully",
+      "successDelete": "XUI client deleted successfully",
+      "showQr": "Show subscription QR",
+      "deleteConfirm": "Delete this client from the XUI inbound?"
+    },
+    "empty": "No XUI clients found."
   },
   "settings": {
     "pageTitle": "Settings",

@@ -7,10 +7,11 @@ import { getDictionary } from '@/lib/dictionary';
 export default async function PanelHome({ params }) {
     const { lang } = await params;
     const sessionData = await getSessionData();
-    if (!sessionData) {
+    if (!sessionData || !sessionData.user) {
       redirect(`/${lang}/auth/login?reason=expired`);
     }
-    if (sessionData.memberships === null) {
+    const isMultiOrg = sessionData.isMultiOrg ?? process.env.NEXT_PUBLIC_IS_MULTI_ORG === 'true';
+    if (!isMultiOrg) {
       redirect(`/${lang}/panel/home/${sessionData.roleName}`);
     }
     if (Array.isArray(sessionData.memberships) && sessionData.memberships.length === 0) {

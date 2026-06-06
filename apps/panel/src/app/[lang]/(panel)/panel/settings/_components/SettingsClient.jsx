@@ -19,6 +19,7 @@ const SettingsPage = () => {
     const lang = useAtomValue(langAtom);
     const profileData = useAtomValue(userAtom)
     const [activeTab, setActiveTab] = useState("1");
+    const isMultiOrg = process.env.NEXT_PUBLIC_IS_MULTI_ORG === 'true';
 
     const onLogout = async () => {
         try {
@@ -93,7 +94,7 @@ const SettingsPage = () => {
                                         </div>
                                     )
                                 },
-                                {
+                                isMultiOrg && {
                                     key: "2",
                                     label: (
                                         <Flex justify="center" align="center" className="min-w-[120px] py-2">
@@ -121,7 +122,7 @@ const SettingsPage = () => {
                                         </div>
                                     )
                                 }
-                            ]}
+                            ].filter(Boolean)}
                         />
                     </Card>
                 </Col>

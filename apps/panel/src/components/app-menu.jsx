@@ -2,7 +2,7 @@
 "use client";
 
 import { Menu } from "antd";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useMemo, useEffect } from "react";
 import { useAtomValue } from "jotai";
 import { abilityAtom } from "@/store/authAtom";
@@ -11,7 +11,6 @@ import { dictAtom, langAtom } from "@/store/i18nAtom";
 import Link from "next/link";
 
 const AppMenu = ({ layout = "inline", cliWidth = 360 }) => {
-  const router = useRouter();
   const pathname = usePathname();
   const ability = useAtomValue(abilityAtom);
   const dict = useAtomValue(dictAtom);
@@ -40,7 +39,7 @@ const AppMenu = ({ layout = "inline", cliWidth = 360 }) => {
           )
         }
       ));
-  }, [ability, lang, layout, router]);
+  }, [ability, dict, lang, layout]);
 
   useEffect(() => {
     const el = document.querySelector('.ant-menu-item-selected');

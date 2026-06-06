@@ -1,0 +1,49 @@
+<svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="gc2" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#4aaeff"></stop>
+            <stop offset="100%" stop-color="#1250d0"></stop>
+          </radialGradient>
+          <filter id="g2">
+            <feGaussianBlur stdDeviation="2.5" result="b"></feGaussianBlur>
+            <feMerge><feMergeNode in="b"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge>
+          </filter>
+          <linearGradient id="lg2" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#1a6ef5" stop-opacity="0"></stop>
+            <stop offset="50%" stop-color="#4aaeff"></stop>
+            <stop offset="100%" stop-color="#1a6ef5" stop-opacity="0"></stop>
+          </linearGradient>
+        </defs>
+
+        <!-- Rings -->
+        <circle cx="36" cy="36" r="33" stroke="#142a55" stroke-width="1" fill="none"></circle>
+        <circle cx="36" cy="36" r="26" stroke="#1a3a6a" stroke-width="0.8" fill="none" stroke-dasharray="3 4" opacity="0.7"></circle>
+
+        <!-- Lines -->
+        <line x1="36" y1="36" x2="10" y2="20" stroke="#1a3570" stroke-width="1"></line>
+        <line x1="36" y1="36" x2="62" y2="20" stroke="#1a3570" stroke-width="1"></line>
+        <line x1="36" y1="36" x2="62" y2="52" stroke="#1a3570" stroke-width="1"></line>
+        <line x1="36" y1="36" x2="10" y2="52" stroke="#1a3570" stroke-width="1"></line>
+        <line x1="36" y1="36" x2="36" y2="5" stroke="#1a3570" stroke-width="1"></line>
+
+        <!-- Animated flows -->
+        <line class="flow-line" x1="36" y1="36" x2="10" y2="20" stroke="url(#lg2)" stroke-width="1.5"></line>
+        <line class="flow-line-3" x1="36" y1="36" x2="62" y2="52" stroke="url(#lg2)" stroke-width="1.5"></line>
+        <line class="flow-line-2" x1="36" y1="36" x2="36" y2="5" stroke="url(#lg2)" stroke-width="1.5"></line>
+
+        <!-- Nodes -->
+        <circle class="node-pulse" cx="10" cy="20" r="3" fill="#4aaeff" filter="url(#g2)"></circle>
+        <circle class="node-pulse-2" cx="62" cy="20" r="3" fill="#4aaeff" filter="url(#g2)"></circle>
+        <circle class="node-pulse-3" cx="62" cy="52" r="3" fill="#4aaeff" filter="url(#g2)"></circle>
+        <circle class="node-pulse" cx="10" cy="52" r="3" fill="#4aaeff" filter="url(#g2)" style="animation-delay:0.3s"></circle>
+        <circle class="node-pulse-2" cx="36" cy="5" r="3" fill="#4aaeff" filter="url(#g2)"></circle>
+
+        <!-- Shield -->
+        <path d="M36 16 L50 22 L50 35 C50 43 36 50 36 50 C36 50 22 43 22 35 L22 22 Z" fill="none" stroke="#2060c0" stroke-width="1.2" opacity="0.6"></path>
+
+        <!-- Center -->
+        <circle cx="36" cy="36" r="10" fill="url(#gc2)" filter="url(#g2)"></circle>
+        <circle cx="36" cy="36" r="7" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"></circle>
+        <rect x="32" y="35" width="8" height="6" rx="1" fill="white" opacity="0.95"></rect>
+        <path d="M33.5 35 L33.5 33.5 C33.5 31.5 38.5 31.5 38.5 33.5 L38.5 35" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round"></path>
+      </svg>

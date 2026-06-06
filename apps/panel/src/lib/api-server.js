@@ -3,6 +3,7 @@ import axios from 'axios';
 import { cookies } from 'next/headers';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+const IS_MULTI_ORG = process.env.NEXT_PUBLIC_IS_MULTI_ORG === 'true';
 
 export const apiServer = async () => {
     const cookieStore = await cookies();
@@ -16,7 +17,7 @@ export const apiServer = async () => {
         api.defaults.headers.common['Cookie'] = `${sessionCookie.name}=${sessionCookie.value}`;
     }
     const activeOrgId = cookieStore.get('active_org_id');
-    if (activeOrgId) {
+    if (IS_MULTI_ORG && activeOrgId) {
         api.defaults.headers.common['x-org-id'] = activeOrgId.value;
     }
     api.interceptors.response.use(

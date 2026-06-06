@@ -59,7 +59,7 @@ export default function ClientPanel({ children }) {
                 className={`${!collapsed ? 'ms-[26px]' : 'ms-[13px]'} rounded-2xl`} 
                 width={40} 
                 height={40} 
-                src={'/app_assets/imgs/logo.jpg'} 
+                src={'/app_assets/imgs/logo.svg'} 
                 preview={false}
                 alt="logo"
               />

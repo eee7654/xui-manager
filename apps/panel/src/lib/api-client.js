@@ -3,6 +3,7 @@ import { authClient } from "./auth-client";
 import Cookies from "js-cookie";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+const IS_MULTI_ORG = process.env.NEXT_PUBLIC_IS_MULTI_ORG === 'true';
 
 export const apiClient = axios.create({
   baseURL: API_URL,
@@ -11,9 +12,12 @@ export const apiClient = axios.create({
 
 apiClient.interceptors.request.use(
     (config) => {
+        config.headers = config.headers || {};
         const activeOrgId = Cookies.get('active_org_id');
-        if (activeOrgId) {
+        if (IS_MULTI_ORG && activeOrgId) {
             config.headers['x-org-id'] = activeOrgId;
+        } else {
+            delete config.headers['x-org-id'];
         }
         return config;
     },

@@ -1,6 +1,5 @@
 // controllers/AuthController.js (یا هر جایی که روت session رو ساختی)
 import UserOrganizationRole from '@/db/models/core/UserOrganizationRole';
-import { AppError } from '@/lib/AppError';
 
 export const fetch = async (req, res) => {
     const isMultiOrg = process.env.IS_MULTI_ORG === 'true';
@@ -24,8 +23,9 @@ export const fetch = async (req, res) => {
     }
     res.json({
         user: req.user,
+        isMultiOrg,
         roleName: req.roleName,
         rules: req.ability.rules,
-        memberships: memberships
+        ...(isMultiOrg && { memberships })
     });
 };

@@ -5,6 +5,7 @@ import Role from '@/db/models/core/Role';
 import { ErrorCodes } from '@/constants/responseCodes';
 import { AppError } from '@/lib/AppError';
 import UserOrganizationRole from '@/db/models/core/UserOrganizationRole';
+import User from '@/db/models/core/User';
 
 export const roleCache = new LRUCache({
     max: 50, 
@@ -44,8 +45,13 @@ function interpolateRules(rules, user) {
 export const requireAuth = async (req, res, next) => {
     const sessionData = await auth.api.getSession({ headers: req.headers });
     if (!sessionData?.user) throw new AppError(401, ErrorCodes.AUTH_SESSION_EXPIRED);
-    const user = sessionData.user;  
     const isMultiOrg = process.env.IS_MULTI_ORG === 'true';
+    const dbUser = await User.query().findById(sessionData.user.id);
+    if (!dbUser) throw new AppError(401, ErrorCodes.AUTH_SESSION_EXPIRED);
+    const user = {
+        ...sessionData.user,
+        ...dbUser.toJSON()
+    };
     const orgIdFromHeader = req.headers['x-org-id'];  
     let roleId = null;
     if (isMultiOrg) {

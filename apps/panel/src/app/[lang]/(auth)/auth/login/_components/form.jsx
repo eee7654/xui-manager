@@ -109,7 +109,7 @@ export default function LoginForm({ dict, lang }) {
                 
                 <img 
                     className={`${styles['brand-img']} animate-pulseScale rounded-2xl`} 
-                    src="/app_assets/imgs/logo.jpg" 
+                    src="/app_assets/imgs/logo.svg" 
                     alt="logo"
                 />
                 
