@@ -10,7 +10,7 @@ module.exports = {
         env_production: {
             NODE_ENV: "production",
             PORT: 4000,
-            WORKER_COUNT: "4"
+            WORKER_COUNT: "1"
         },
         output: './logs/out.log',
         error: './logs/error.log',
@@ -22,7 +22,7 @@ module.exports = {
       cwd: "./apps/panel",
       script: "node_modules/next/dist/bin/next",
       args: "start",
-      instances: "4", 
+      instances: "1", 
       exec_mode: "cluster",
       watch: false,
       env_production: {
