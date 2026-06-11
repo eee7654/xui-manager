@@ -351,6 +351,7 @@
     "empty": "هنوز هیچ سرور XUI تعریف نشده است."
   },
   "xuiClients": {
+    "quotaExceeded": "اتمام ترافیک",
     "pageTitle": "مدیریت کلاینت‌های XUI",
     "serverErrors": "برخی سرورها بارگذاری نشدند",
     "header": {

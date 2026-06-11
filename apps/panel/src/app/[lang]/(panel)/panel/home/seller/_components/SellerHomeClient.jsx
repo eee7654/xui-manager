@@ -4,6 +4,7 @@ import { Alert, Card, Col, Row, Skeleton, Statistic } from "antd";
 import { useAtomValue } from "jotai";
 import { dictAtom } from "@/store/i18nAtom";
 import * as XuiClientService from "@/services/xuiClients.service";
+import { convertEmojiShortcodes } from "@/lib/emoji";
 
 const formatBytes = (value) => {
     const bytes = Number(value || 0);
@@ -71,7 +72,7 @@ const SellerHomeClient = () => {
                     type="warning"
                     showIcon
                     message={dict.home.sellerStats.serverErrors}
-                    description={serverErrors.map(item => `${item.server_name}: ${item.code}`).join(' | ')}
+                    description={serverErrors.map(item => `${convertEmojiShortcodes(item.server_name)}: ${item.code}`).join(' | ')}
                 />
             )}
             <Row gutter={[16, 16]}>

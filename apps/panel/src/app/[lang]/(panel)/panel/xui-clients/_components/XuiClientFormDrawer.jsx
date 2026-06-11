@@ -10,6 +10,7 @@ import * as XuiClientService from "@/services/xuiClients.service";
 import * as XuiServerService from "@/services/xuiServers.service";
 import { Datepicker } from "@ijavad805/react-datepicker";
 import moment from "jalali-moment";
+import { convertEmojiShortcodes } from "@/lib/emoji";
 
 const bytesToGb = (value) => Math.round(Number(value || 0) / 1024 / 1024 / 1024);
 const dayMs = 24 * 60 * 60 * 1000;
@@ -36,6 +37,8 @@ const getExpiryInitialValues = (expiryTime) => {
         expiry_time: 0
     };
 };
+
+// emoji helpers available via @/lib/emoji
 
 const ExpiryDatePicker = ({ value, onChange, lang, themeMode, placeholder }) => {
     const dateValue = value ? moment(Number(value)).locale(lang) : undefined;
@@ -67,9 +70,12 @@ const XuiClientFormDrawer = ({ open, onClose, initialValues, mode = "create" }) 
     const [form] = Form.useForm();
     const expiryMode = Form.useWatch('expiry_mode', form);
     const { message } = App.useApp();
-    const canReadServers = ability.can('read', 'XuiServer');
+    const canReadServers = ability.can('list', 'XuiServer');
     const canManageClients = ability.can('manage', 'XuiClient');
-    const { data: serversData } = XuiServerService.useLookup(null, { enabled: canReadServers });
+    const canCreateClients = ability.can('create', 'XuiClient');
+    // allow seller users (who can create clients) to pick a server too
+    const showServerSelect = mode === "create" && (canReadServers || canManageClients || canCreateClients);
+    const { data: serversData } = XuiServerService.useLookup(null, { enabled: canReadServers || canManageClients || canCreateClients });
     const { mutate: createClient, isPending: isCreating } = XuiClientService.useCreate();
     const { mutate: updateClient, isPending: isUpdating } = XuiClientService.useUpdate();
 
@@ -146,7 +152,7 @@ const XuiClientFormDrawer = ({ open, onClose, initialValues, mode = "create" }) 
             }
         >
             <Form layout="vertical" form={form} onFinish={onFinish}>
-                {mode === "create" && canReadServers && (
+                {showServerSelect && (
                     <Form.Item name="server_id" label={dict.xuiClients.form.server}>
                         <Select
                             allowClear
@@ -154,7 +160,12 @@ const XuiClientFormDrawer = ({ open, onClose, initialValues, mode = "create" }) 
                             placeholder={dict.xuiClients.form.autoServer}
                             options={(serversData?.data || []).map(server => ({
                                 value: server.id,
-                                label: `${server.name} - #${server.inbound_id}`
+                                label: (
+                                    <div className="flex items-center">
+                                        <span className="me-2">{convertEmojiShortcodes(server.name)}</span>
+                                        <span className="text-textMuted">{` - #${server.inbound_id}`}</span>
+                                    </div>
+                                )
                             }))}
                         />
                     </Form.Item>

@@ -11,6 +11,7 @@ import * as XuiClientService from "@/services/xuiClients.service";
 import ErrComp from "@/components/ui/ErrComp";
 import XuiClientFormDrawer from "./XuiClientFormDrawer";
 import moment from "jalali-moment";
+import { convertEmojiShortcodes } from "@/lib/emoji";
 
 const { Text } = Typography;
 
@@ -135,7 +136,7 @@ const XuiClientsClient = () => {
             key: 'server',
             render: (_, row) => (
                 <Flex vertical>
-                    <span className="font-medium text-textBase">{row.server_name}</span>
+                    <span className="font-medium text-textBase">{convertEmojiShortcodes(row.server_name)}</span>
                     <span className="text-textMuted text-xs font-mono">#{row.inbound_id} {row.inbound_tag || ''}</span>
                 </Flex>
             )
@@ -179,19 +180,46 @@ const XuiClientsClient = () => {
         },
         {
             title: dict.xuiClients.table.status,
-            dataIndex: 'enable',
-            key: 'enable',
+            key: 'status',
             align: 'center',
-            render: (enabled) => (
-                enabled ?
-                    <Tag color="success" className="!rounded-md border-none !bg-green-50 dark:!bg-green-900/30 !text-success m-0">
-                        {dict.common.active}
-                    </Tag>
-                    :
+            render: (_, record) => {
+                const used = Number(record.traffic_used || 0);
+                const total = Number(record.traffic_total || 0);
+                const expiry = Number(record.expiryTime || 0);
+
+                // if expiry is a fixed date and has passed -> expired
+                if (expiry > 0 && Date.now() > expiry) {
+                    return (
+                        <Tag color="error" className="!rounded-md border-none !bg-red-50 dark:!bg-red-900/30 !text-accent m-0">
+                            {dict.xuiClients.statusExpired}
+                        </Tag>
+                    );
+                }
+
+                // if quota is defined and used >= total, show quota-exceeded state
+                if (total > 0 && used >= total) {
+                    return (
+                        <Tag color="error" className="!rounded-md border-none !bg-red-50 dark:!bg-red-900/30 !text-accent m-0">
+                            {dict.xuiClients.quotaExceeded}
+                        </Tag>
+                    );
+                }
+
+                // otherwise fall back to enabled/disabled
+                if (record.enable) {
+                    return (
+                        <Tag color="success" className="!rounded-md border-none !bg-green-50 dark:!bg-green-900/30 !text-success m-0">
+                            {dict.common.active}
+                        </Tag>
+                    );
+                }
+
+                return (
                     <Tag color="error" className="!rounded-md border-none !bg-red-50 dark:!bg-red-900/30 !text-accent m-0">
                         {dict.common.inactive}
                     </Tag>
-            )
+                );
+            }
         },
         {
             title: dict.common.actions,
@@ -298,7 +326,7 @@ const XuiClientsClient = () => {
                                 type="warning"
                                 showIcon
                                 message={dict.xuiClients.serverErrors}
-                                description={serverErrors.map(item => `${item.server_name}: ${item.code}`).join(' | ')}
+                                description={serverErrors.map(item => `${convertEmojiShortcodes(item.server_name)}: ${item.code}`).join(' | ')}
                             />
                         )}
                         <Table

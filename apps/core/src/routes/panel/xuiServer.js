@@ -10,6 +10,6 @@ router.post('/', checkPermission('create', 'XuiServer'), xuiServerCont.create);
 
 router.patch('/:id', checkPermission('update', 'XuiServer'), xuiServerCont.update);
 
-router.get('/lookup', checkPermission('read', 'XuiServer'), xuiServerCont.lookup);
+router.get('/lookup', checkPermission('list', 'XuiServer'), xuiServerCont.lookup);
 
 export default router;

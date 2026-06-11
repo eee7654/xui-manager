@@ -9,6 +9,7 @@ import { abilityAtom } from "@/store/authAtom";
 import { dictAtom } from "@/store/i18nAtom";
 import * as XuiServerService from "@/services/xuiServers.service";
 import ErrComp from "@/components/ui/ErrComp";
+import { convertEmojiShortcodes } from "@/lib/emoji";
 import XuiServerFormDrawer from "./XuiServerFormDrawer";
 
 const XuiServersClient = () => {
@@ -59,7 +60,7 @@ const XuiServersClient = () => {
                         <i className="bi bi-hdd-network" />
                     </div>
                     <Flex vertical>
-                        <span className="font-semibold text-textBase">{text}</span>
+                        <span className="font-semibold text-textBase">{convertEmojiShortcodes(text)}</span>
                         <span className="text-textMuted text-xs font-mono mt-1">{row.panel_url}</span>
                     </Flex>
                 </div>

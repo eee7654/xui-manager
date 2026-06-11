@@ -346,6 +346,8 @@
     "empty": "No XUI servers have been defined."
   },
   "xuiClients": {
+    "quotaExceeded": "Traffic Limit",
+    "statusExpired": "Expired",
     "pageTitle": "Manage XUI clients",
     "serverErrors": "Some servers could not be loaded",
     "header": {

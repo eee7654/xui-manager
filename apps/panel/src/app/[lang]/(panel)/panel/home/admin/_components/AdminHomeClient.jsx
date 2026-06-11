@@ -4,6 +4,7 @@ import { Alert, Card, Col, Row, Skeleton, Statistic, Table } from "antd";
 import { useAtomValue } from "jotai";
 import { dictAtom } from "@/store/i18nAtom";
 import * as XuiClientService from "@/services/xuiClients.service";
+import { convertEmojiShortcodes } from "@/lib/emoji";
 
 const formatBytes = (value) => {
     const bytes = Number(value || 0);
@@ -75,7 +76,7 @@ const AdminHomeClient = () => {
             key: 'server',
             render: (_, row) => (
                 <div className="flex flex-col">
-                    <span className="text-textBase font-medium">{row.server_name}</span>
+                    <span className="text-textBase font-medium">{convertEmojiShortcodes(row.server_name)}</span>
                     <span className="text-textMuted text-xs font-mono">#{row.inbound_id} {row.inbound_tag || ''}</span>
                 </div>
             )
@@ -126,7 +127,7 @@ const AdminHomeClient = () => {
                     type="warning"
                     showIcon
                     message={dict.home.adminStats.serverErrors}
-                    description={serverErrors.map(item => `${item.server_name}: ${item.code}`).join(' | ')}
+                    description={serverErrors.map(item => `${convertEmojiShortcodes(item.server_name)}: ${item.code}`).join(' | ')}
                 />
             )}
             <Row gutter={[16, 16]}>
