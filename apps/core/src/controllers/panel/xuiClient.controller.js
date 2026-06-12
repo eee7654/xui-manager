@@ -13,6 +13,7 @@ import {
     fetchServerClients,
     findClientById,
     getClientOwnerMarker,
+    resetInboundClientTraffic,
     updateInboundClient
 } from '@/services/xuiPanel.service.js';
 import {
@@ -361,6 +362,36 @@ export const remove = async (req, res) => {
         res.json({
             status: 'ok',
             code: SuccessCodes.XUI_CLIENT_DELETED_SUCCESSFULLY
+        });
+    } finally {
+        await releaseXuiWriteLock(lock);
+    }
+};
+
+export const resetTraffic = async (req, res) => {
+    const { serverId, clientId } = req.params;
+    const server = await XuiServer.query()
+        .where('is_active', true)
+        .findById(serverId);
+    if (!server) throw new AppError(404, ErrorCodes.XUI_SERVER_NOT_FOUND);
+
+    let lock = null;
+    try {
+        lock = await acquireXuiWriteLock(buildInboundLockKey(server.id, server.inbound_id));
+        const currentClients = await fetchServerClients(server);
+        const existingClient = findClientById(currentClients, clientId);
+        if (!existingClient) throw new AppError(404, ErrorCodes.XUI_CLIENT_NOT_FOUND);
+
+        const sellerUsername = getSellerUsername(req);
+        if (isSeller(req) && !clientBelongsToUsername(server, existingClient, sellerUsername)) {
+            throw new AppError(403, ErrorCodes.GEN_FORBIDDEN_ACCESS);
+        }
+
+        ForbiddenError.from(req.ability).throwUnlessCan('update', subject('XuiClient', existingClient));
+        await resetInboundClientTraffic(server, existingClient.email);
+        res.json({
+            status: 'ok',
+            code: SuccessCodes.XUI_CLIENT_UPDATED_SUCCESSFULLY
         });
     } finally {
         await releaseXuiWriteLock(lock);

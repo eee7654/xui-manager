@@ -86,6 +86,20 @@ const parseInboundClientStats = (inbound) => {
     return Array.isArray(inbound.clientStats) ? inbound.clientStats : [];
 };
 
+const parseInboundList = (payload) => {
+    const data = payload?.obj ?? payload;
+    if (Array.isArray(data)) return data;
+    if (data && typeof data === 'object') return [data];
+    return [];
+};
+
+const findInboundForServer = (inbounds, server) => {
+    const inbound = inbounds.find(item => String(item?.id) === String(server.inbound_id));
+    if (inbound) return inbound;
+    if (!server.inbound_tag) return null;
+    return inbounds.find(item => String(item?.tag || '') === String(server.inbound_tag)) || null;
+};
+
 const normalizeStatEmail = (value = '') => {
     return String(value).trim().split(/\s+/)[0];
 };
@@ -197,9 +211,10 @@ export const createXuiHttpClient = async (server, options = {}) => {
 
 export const fetchInbound = async (server, client = null) => {
     const httpClient = client || await createXuiHttpClient(server);
-    const response = await httpClient.get(`/panel/api/inbounds/get/${server.inbound_id}`);
-    const inbound = response.data?.obj || response.data;
-    if (response.status >= 400 || response.data?.success === false || typeof inbound === 'string') {
+    const response = await httpClient.get('/panel/api/inbounds/list');
+    const inbounds = parseInboundList(response.data);
+    const inbound = findInboundForServer(inbounds, server);
+    if (response.status >= 400 || response.data?.success === false || !inbound) {
         const error = new Error('XUI_INBOUND_FETCH_FAILED');
         error.code = 'XUI_INBOUND_FETCH_FAILED';
         error.status = response.status;
@@ -210,15 +225,15 @@ export const fetchInbound = async (server, client = null) => {
 
 const fetchInboundWithAuthRetry = async (server) => {
     let client = await createXuiHttpClient(server);
-    let response = await client.get(`/panel/api/inbounds/get/${server.inbound_id}`);
-    let inbound = response.data?.obj || response.data;
-    if (response.status === 401 || response.status === 403 || response.status === 404 || response.data?.success === false || typeof inbound === 'string') {
+    let response = await client.get('/panel/api/inbounds/list');
+    let inbound = findInboundForServer(parseInboundList(response.data), server);
+    if (response.status === 401 || response.status === 403 || response.status === 404 || response.data?.success === false || !inbound) {
         await clearCachedCookieHeader(server);
         client = await createXuiHttpClient(server, { forceLogin: true });
-        response = await client.get(`/panel/api/inbounds/get/${server.inbound_id}`);
-        inbound = response.data?.obj || response.data;
+        response = await client.get('/panel/api/inbounds/list');
+        inbound = findInboundForServer(parseInboundList(response.data), server);
     }
-    if (response.status >= 400 || response.data?.success === false || typeof inbound === 'string') {
+    if (response.status >= 400 || response.data?.success === false || !inbound) {
         const error = new Error('XUI_INBOUND_FETCH_FAILED');
         error.code = 'XUI_INBOUND_FETCH_FAILED';
         error.status = response.status;
@@ -231,57 +246,17 @@ const fetchInboundWithAuthRetry = async (server) => {
 };
 
 const fetchOnlineClients = async (client) => {
-    const candidates = [
-        () => client.post('/panel/api/inbounds/onlines'),
-        () => client.get('/panel/api/inbounds/onlines')
-    ];
-    for (const request of candidates) {
-        try {
-            const response = await request();
-            if (response.status < 400 && response.data?.success !== false) {
-                const data = response.data?.obj || response.data;
-                if (Array.isArray(data)) return new Set(data.map(item => String(item)));
-                if (Array.isArray(data?.onlines)) return new Set(data.onlines.map(item => String(item)));
-            }
-        } catch (error) {
-            // Try the next known shape; online state is best-effort.
+    try {
+        const response = await client.post('/panel/api/inbounds/onlines');
+        if (response.status < 400 && response.data?.success !== false) {
+            const data = response.data?.obj || response.data;
+            if (Array.isArray(data)) return new Set(data.map(item => String(item)));
+            if (Array.isArray(data?.onlines)) return new Set(data.onlines.map(item => String(item)));
         }
+    } catch (error) {
+        // Try the next known shape; online state is best-effort.
     }
     return new Set();
-};
-
-const fetchClientTrafficStats = async (client, xuiClient) => {
-    const emailCandidates = Array.from(new Set([
-        xuiClient.email,
-        normalizeStatEmail(xuiClient.email)
-    ].filter(Boolean)));
-    for (const email of emailCandidates) {
-        try {
-            const response = await client.get(`/panel/api/inbounds/getClientTraffics/${encodeURIComponent(email)}`, {
-                timeout: 2500
-            });
-            if (response.status < 400 && response.data?.success !== false) {
-                return normalizeTrafficStats(response.data?.obj || response.data);
-            }
-        } catch (error) {
-            // Traffic is best-effort; keep trying other email shapes.
-        }
-    }
-    return null;
-};
-
-const runWithConcurrency = async (items, limit, mapper) => {
-    const results = new Array(items.length);
-    let cursor = 0;
-    const workers = new Array(Math.min(limit, items.length)).fill(null).map(async () => {
-        while (cursor < items.length) {
-            const index = cursor;
-            cursor += 1;
-            results[index] = await mapper(items[index], index);
-        }
-    });
-    await Promise.all(workers);
-    return results;
 };
 
 const buildSubscriptionUrl = (server, client) => {
@@ -294,14 +269,8 @@ export const fetchServerClients = async (server) => {
     const clients = parseInboundClients(inbound);
     const statsIndex = createStatsIndex(parseInboundClientStats(inbound));
     const onlineClients = await fetchOnlineClients(client);
-    return runWithConcurrency(clients, 5, async (xuiClient) => {
-        let stats = null;
-        try {
-            const statFromInbound = normalizeTrafficStats(findClientStats(statsIndex, xuiClient));
-            stats = statFromInbound || await fetchClientTrafficStats(client, xuiClient);
-        } catch (error) {
-            stats = null;
-        }
+    return clients.map((xuiClient) => {
+        const stats = normalizeTrafficStats(findClientStats(statsIndex, xuiClient));
         const up = Number(stats?.up || 0);
         const down = Number(stats?.down || 0);
         return {
@@ -310,7 +279,7 @@ export const fetchServerClients = async (server) => {
             traffic_down: down,
             traffic_used: up + down,
             traffic_total: Number(xuiClient.totalGB || stats?.total || 0),
-            is_online: onlineClients.has(String(xuiClient.email)) || onlineClients.has(String(normalizeStatEmail(xuiClient.email))) || onlineClients.has(String(xuiClient.id)),
+            is_online: onlineClients.has(String(xuiClient.email)),
             seller_username: getClientOwnerUsername(server, xuiClient),
             subscription_url: buildSubscriptionUrl(server, xuiClient),
             server_id: server.id,
@@ -377,6 +346,18 @@ export const deleteInboundClient = async (server, clientId) => {
     error.code = 'XUI_CLIENT_DELETE_FAILED';
     error.status = lastError?.status;
     throw error;
+};
+
+export const resetInboundClientTraffic = async (server, clientEmail) => {
+    const { client } = await fetchInboundWithAuthRetry(server);
+    const response = await client.post(`/panel/inbound/${server.inbound_id}/resetClientTraffic/${encodeURIComponent(clientEmail)}`);
+    if (response.status >= 400 || response.data?.success === false) {
+        const error = new Error('XUI_CLIENT_TRAFFIC_RESET_FAILED');
+        error.code = 'XUI_CLIENT_TRAFFIC_RESET_FAILED';
+        error.status = response.status;
+        throw error;
+    }
+    return response.data;
 };
 
 export const findClientById = (clients, clientId) => {

@@ -12,6 +12,8 @@ router.post('/', checkPermission('create', 'XuiClient'), xuiClientCont.create);
 
 router.patch('/:serverId/:clientId', checkPermission('update', 'XuiClient'), xuiClientCont.update);
 
+router.post('/:serverId/:clientId/reset-traffic', checkPermission('update', 'XuiClient'), xuiClientCont.resetTraffic);
+
 router.delete('/:serverId/:clientId', checkPermission('delete', 'XuiClient'), xuiClientCont.remove);
 
 export default router;

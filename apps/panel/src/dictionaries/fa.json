@@ -67,6 +67,8 @@
     "users":"کاربران / اعضا",
     "xuiServers": "سرورهای XUI",
     "xuiClients": "کلاینت‌های XUI",
+    "cloudflareDns": "DNS کلادفلر",
+    "cloudflareBans": "مسدودی‌های کلادفلر",
     "settings": "تنظیمات"
   },
   "auth": {
@@ -408,10 +410,59 @@
       "successCreate": "کلاینت XUI با موفقیت ایجاد شد",
       "successEdit": "کلاینت XUI با موفقیت به‌روزرسانی شد",
       "successDelete": "کلاینت XUI با موفقیت حذف شد",
+      "successResetTraffic": "ترافیک کلاینت با موفقیت ریست شد",
       "showQr": "نمایش QR اشتراک",
-      "deleteConfirm": "این کلاینت از اینباند XUI حذف شود؟"
+      "deleteConfirm": "این کلاینت از اینباند XUI حذف شود؟",
+      "resetTraffic": "ریست ترافیک",
+      "resetTrafficConfirm": "مصرف ترافیک این کلاینت ریست شود؟"
     },
     "empty": "هیچ کلاینت XUI یافت نشد."
+  },
+  "cloudflareDns": {
+    "pageTitle": "مدیریت DNS کلادفلر",
+    "header": {
+      "desc": "جایگزینی رکوردهای A برای زیردامنه‌های اپراتورها"
+    },
+    "table": {
+      "hostname": "زیردامنه",
+      "currentIps": "IPهای فعلی",
+      "newIps": "IPهای اسکن‌شده جدید"
+    },
+    "form": {
+      "ipsPlaceholder": "هر IP در یک خط، یا جدا شده با کاما"
+    },
+    "actions": {
+      "replace": "جایگزینی رکوردها",
+      "successUpdate": "رکوردهای DNS با موفقیت به‌روزرسانی شد"
+    },
+    "empty": "هیچ زیردامنه مدیریتی تنظیم نشده است."
+  },
+  "cloudflareBans": {
+    "pageTitle": "لیست مسدودی کلادفلر",
+    "header": {
+      "desc": "بررسی IPهای گزارش‌شده و همگام‌سازی لیست فعال با کلادفلر",
+      "searchPlaceholder": "جستجو بر اساس IP، سرور یا دلیل...",
+      "activeCount": "مسدودی فعال"
+    },
+    "table": {
+      "ip": "آدرس IP",
+      "source": "سرور مبدا",
+      "bannedAt": "زمان مسدودی",
+      "expiresAt": "زمان رفع مسدودی",
+      "status": "وضعیت"
+    },
+    "status": {
+      "active": "مسدود",
+      "expired": "منقضی"
+    },
+    "actions": {
+      "sync": "همگام‌سازی",
+      "clear": "پاک‌سازی لیست",
+      "clearConfirm": "همه مسدودی‌های فعلی غیرفعال و لیست خالی به کلادفلر ارسال شود؟",
+      "successSync": "لیست کلادفلر با موفقیت همگام شد",
+      "successClear": "لیست کلادفلر با موفقیت پاک شد"
+    },
+    "empty": "هنوز IP مسدودشده‌ای گزارش نشده است."
   },
   "settings": {
     "pageTitle": "تنظیمات",

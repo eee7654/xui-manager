@@ -57,6 +57,7 @@ const XuiClientsClient = () => {
 
     const { data, isLoading, isFetching, error } = XuiClientService.useList({ page, limit, search });
     const { mutate: deleteClient, isPending: isDeleting } = XuiClientService.useDelete();
+    const { mutate: resetTraffic, isPending: isResettingTraffic } = XuiClientService.useResetTraffic();
     const serverErrors = data?._meta?.errors || [];
 
     useEffect(() => {
@@ -110,6 +111,14 @@ const XuiClientsClient = () => {
             message.error(dict.errors?.GEN_UNKNOWN_ERROR || 'Copy failed');
         }
     }, [dict, message]);
+
+    const handleResetTraffic = useCallback((record) => {
+        resetTraffic({ server_id: record.server_id, id: record.id }, {
+            onSuccess: () => {
+                message.success(dict.xuiClients.actions.successResetTraffic);
+            }
+        });
+    }, [resetTraffic, dict, message]);
 
     const columns = useMemo(() => [
         {
@@ -239,6 +248,23 @@ const XuiClientsClient = () => {
                         </Tooltip>
                     )}
                     <Can I="update" this={subject('XuiClient', record)} ability={ability}>
+                        <Popconfirm
+                            title={dict.xuiClients.actions.resetTraffic}
+                            description={dict.xuiClients.actions.resetTrafficConfirm}
+                            okText={dict.common.yes}
+                            cancelText={dict.common.no}
+                            okButtonProps={{ loading: isResettingTraffic }}
+                            onConfirm={() => handleResetTraffic(record)}
+                        >
+                            <Tooltip title={dict.xuiClients.actions.resetTraffic}>
+                                <Button
+                                    type="text"
+                                    className="!text-borderColor !bg-textBase me-2"
+                                    size="large"
+                                    icon={<i className="bi bi-speedometer2 grid" />}
+                                />
+                            </Tooltip>
+                        </Popconfirm>
                         <Tooltip title={dict.common.edit}>
                             <Button
                                 type="text"
@@ -272,7 +298,7 @@ const XuiClientsClient = () => {
                 </Space>
             )
         }
-    ], [dict, ability, lang, isDeleting, handleDeleteClient]);
+    ], [dict, ability, lang, isDeleting, isResettingTraffic, handleDeleteClient, handleResetTraffic]);
 
     return (
         <div className="container mx-auto px-4 py-6 box-border z-[1] h-[100dvh] max-sm:h-[calc(100dvh-92px)] min-h-0">

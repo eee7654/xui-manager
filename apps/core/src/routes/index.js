@@ -3,6 +3,7 @@ import { createRouter } from "next-connect";
 
 import authRoutes from './auth';
 import panelRoutes from './panel';
+import xuiBanReportRoutes from './xuiBanReport';
 import { AppError } from "@/lib/AppError";
 import { ForbiddenError } from "@casl/ability";
 import { ErrorCodes } from "@/constants/responseCodes";
@@ -12,6 +13,8 @@ const mainRouter = createRouter();
 mainRouter.use('/api/auth', authRoutes)
 
 mainRouter.use('/api/v1/panel', panelRoutes)
+
+mainRouter.use('/api/v1/xui-ban-reports', xuiBanReportRoutes)
 
 mainRouter.get('/api/loadtest', (req, res) => {
     res.status(200).json({

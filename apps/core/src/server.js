@@ -8,6 +8,7 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 
 import { routeHandler } from '@/routes';
+import { startCloudflareBanSyncScheduler } from '@/services/cloudflare.service.js';
 
 var allowedOrigins = [process.env.DASHBOARD_URL || "http://localhost:3000"]
 
@@ -54,6 +55,9 @@ if (cluster.isPrimary) {
 
 } else {
     const PORT = parseInt(process.env.WORKER_PORT, 10);
+    if (PORT === BASE_PORT) {
+        startCloudflareBanSyncScheduler();
+    }
 
     const coreHandler = async (req, res) => {
         try {
@@ -86,7 +90,7 @@ if (cluster.isPrimary) {
         },
         credentials: true,
         methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
-        allowedHeaders: ["Content-Type", "Authorization", "Cookie","x-org-id"]
+        allowedHeaders: ["Content-Type", "Authorization", "Cookie","x-org-id", "x-ban-report-token"]
     }));
 
     app.use(express.json())

@@ -94,7 +94,7 @@ export default function ClientPanel({ children }) {
             <Card className='!bg-bgBase border-none shadow-sm' classNames={{body:'!p-[12px]'}}>
                 <Flex justify='space-around' align='center'>
                     {!collapsed && (<Text className='text-gray-500 text-xs'>{dict.auth.version_label}</Text>)}
-                    <Text className='text-[#2e424d] text-xs' strong>1.0.0</Text>
+                    <Text className='text-[#2e424d] text-xs' strong>1.1.0</Text>
                 </Flex>
             </Card>
           </div>

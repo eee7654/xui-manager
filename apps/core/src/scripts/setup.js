@@ -103,7 +103,15 @@ const runSeeder = async () => {
             { action: 'create', resource: 'XuiClient', description: 'Create XUI clients' },
             { action: 'update', resource: 'XuiClient', description: 'Update XUI clients' },
             { action: 'delete', resource: 'XuiClient', description: 'Delete XUI clients' },
-            { action: 'manage', resource: 'XuiClient', description: 'Manage all XUI clients' }
+            { action: 'manage', resource: 'XuiClient', description: 'Manage all XUI clients' },
+            { action: 'read', resource: 'CloudflareDns', description: 'View managed Cloudflare DNS records' },
+            { action: 'update', resource: 'CloudflareDns', description: 'Replace managed Cloudflare DNS A records' },
+            { action: 'manage', resource: 'CloudflareDns', description: 'Manage Cloudflare DNS records' },
+            { action: 'read', resource: 'CloudflareBan', description: 'View Cloudflare ban list entries' },
+            { action: 'create', resource: 'CloudflareBan', description: 'Create Cloudflare ban entries' },
+            { action: 'sync', resource: 'CloudflareBan', description: 'Sync Cloudflare ban list entries' },
+            { action: 'delete', resource: 'CloudflareBan', description: 'Clear Cloudflare ban list entries' },
+            { action: 'manage', resource: 'CloudflareBan', description: 'Manage Cloudflare ban list entries' }
         ];
         console.log('   -> Inserting Core Permissions...');
         for (const perm of corePermissions) {

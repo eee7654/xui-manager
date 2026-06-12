@@ -79,3 +79,17 @@ export const useDelete = () => {
         }
     });
 };
+
+export const useResetTraffic = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ server_id, id }) => fetcher({
+            method: 'POST',
+            url: `/api/v1/panel/xui-clients/${server_id}/${id}/reset-traffic`
+        }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: XUI_CLIENT_KEYS.lists() });
+            queryClient.invalidateQueries({ queryKey: [...XUI_CLIENT_KEYS.all, 'stats'] });
+        }
+    });
+};

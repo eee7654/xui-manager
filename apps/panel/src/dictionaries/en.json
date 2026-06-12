@@ -66,6 +66,8 @@
     "users":"Users / Members",
     "xuiServers": "XUI Servers",
     "xuiClients": "XUI Clients",
+    "cloudflareDns": "Cloudflare DNS",
+    "cloudflareBans": "Cloudflare bans",
     "settings": "Settings"
   },
   "auth": {
@@ -404,10 +406,59 @@
       "successCreate": "XUI client created successfully",
       "successEdit": "XUI client updated successfully",
       "successDelete": "XUI client deleted successfully",
+      "successResetTraffic": "Client traffic was reset successfully",
       "showQr": "Show subscription QR",
-      "deleteConfirm": "Delete this client from the XUI inbound?"
+      "deleteConfirm": "Delete this client from the XUI inbound?",
+      "resetTraffic": "Reset traffic",
+      "resetTrafficConfirm": "Reset traffic usage for this client?"
     },
     "empty": "No XUI clients found."
+  },
+  "cloudflareDns": {
+    "pageTitle": "Manage Cloudflare DNS",
+    "header": {
+      "desc": "Replace managed A records for the carrier subdomains"
+    },
+    "table": {
+      "hostname": "Subdomain",
+      "currentIps": "Current IPs",
+      "newIps": "New scanned IPs"
+    },
+    "form": {
+      "ipsPlaceholder": "One IP per line, or separated by commas"
+    },
+    "actions": {
+      "replace": "Replace records",
+      "successUpdate": "DNS records updated successfully"
+    },
+    "empty": "No managed DNS hostnames were configured."
+  },
+  "cloudflareBans": {
+    "pageTitle": "Cloudflare ban list",
+    "header": {
+      "desc": "Review reported banned IPs and sync the active list to Cloudflare",
+      "searchPlaceholder": "Search by IP, server or reason...",
+      "activeCount": "Active bans"
+    },
+    "table": {
+      "ip": "IP address",
+      "source": "Source server",
+      "bannedAt": "Banned at",
+      "expiresAt": "Unban at",
+      "status": "Status"
+    },
+    "status": {
+      "active": "Blocked",
+      "expired": "Expired"
+    },
+    "actions": {
+      "sync": "Sync now",
+      "clear": "Clear list",
+      "clearConfirm": "Deactivate all current bans and push an empty list to Cloudflare?",
+      "successSync": "Cloudflare list synced successfully",
+      "successClear": "Cloudflare list cleared successfully"
+    },
+    "empty": "No banned IPs have been reported."
   },
   "settings": {
     "pageTitle": "Settings",

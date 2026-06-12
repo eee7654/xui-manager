@@ -13,6 +13,7 @@
 *.tsbuildinfo
 
 # Logs & Debugging
+/storage
 /logs
 *.log
 npm-debug.log*
