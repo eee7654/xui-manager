@@ -222,6 +222,17 @@ export const formatSqlDateTime = (date = new Date()) => {
     return date.toISOString().slice(0, 19).replace('T', ' ');
 };
 
+export const sqlDateTimeToUtcIso = (value) => {
+    if (!value) return null;
+    if (value instanceof Date) return value.toISOString();
+    const raw = String(value).trim();
+    if (!raw) return null;
+    if (raw.includes('T')) {
+        return raw.endsWith('Z') || /[+-]\d{2}:\d{2}$/.test(raw) ? raw : `${raw}Z`;
+    }
+    return `${raw.replace(' ', 'T')}Z`;
+};
+
 const normalizeClientEmail = (value) => {
     const normalized = String(value || '').trim();
     return normalized || null;

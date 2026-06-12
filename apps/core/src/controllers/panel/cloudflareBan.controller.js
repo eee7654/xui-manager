@@ -3,10 +3,19 @@ import CloudflareBannedIp from '@/db/models/core/CloudflareBannedIp.js';
 import {
     clearCloudflareBanList,
     formatSqlDateTime,
+    sqlDateTimeToUtcIso,
     syncCloudflareBanList
 } from '@/services/cloudflare.service.js';
 
 const readCount = (row) => Number(row?.total || row?.count || 0);
+
+const serializeBanRow = (row) => {
+    const data = typeof row?.toJSON === 'function' ? row.toJSON() : { ...row };
+    for (const field of ['banned_at', 'expires_at', 'last_seen_at', 'last_synced_at', 'created_at', 'updated_at']) {
+        if (data[field]) data[field] = sqlDateTimeToUtcIso(data[field]);
+    }
+    return data;
+};
 
 export const fetch = async (req, res) => {
     ForbiddenError.from(req.ability).throwUnlessCan('read', 'CloudflareBan');
@@ -32,7 +41,7 @@ export const fetch = async (req, res) => {
         .count('id as total')
         .first();
     res.json({
-        data: result.results,
+        data: result.results.map(serializeBanRow),
         total: result.total,
         page: safePage,
         limit: safeLimit,

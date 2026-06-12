@@ -10,7 +10,16 @@ import * as CloudflareBansService from "@/services/cloudflareBans.service";
 import ErrComp from "@/components/ui/ErrComp";
 import moment from "jalali-moment";
 
-const formatDate = (value, lang) => value ? moment(value).locale(lang).format('YYYY/MM/DD HH:mm') : '-';
+const parseUtcDate = (value) => {
+    if (!value) return null;
+    const date = moment.utc(value);
+    return date.isValid() ? date : null;
+};
+
+const formatDate = (value, lang) => {
+    const date = parseUtcDate(value);
+    return date ? date.local().locale(lang).format('YYYY/MM/DD HH:mm') : '-';
+};
 
 const CloudflareBansClient = () => {
     const dict = useAtomValue(dictAtom);
@@ -76,7 +85,8 @@ const CloudflareBansClient = () => {
             key: 'is_active',
             align: 'center',
             render: (value, row) => {
-                const active = value && new Date(row.expires_at).getTime() > Date.now();
+                const expiresAt = parseUtcDate(row.expires_at);
+                const active = value && expiresAt && expiresAt.valueOf() > Date.now();
                 return active ? (
                     <Tag color="error" className="!rounded-md border-none !bg-red-50 dark:!bg-red-900/30 !text-accent m-0">
                         {dict.cloudflareBans.status.active}
