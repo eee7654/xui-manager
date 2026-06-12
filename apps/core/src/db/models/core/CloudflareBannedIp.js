@@ -13,6 +13,7 @@ class CloudflareBannedIp extends DefaultModel {
         id: { type: ['integer', 'string'] },
         ip: { type: 'string', minLength: 3, maxLength: 45 },
         source_server: { type: ['string', 'null'], maxLength: 255 },
+        client_email: { type: ['string', 'null'], maxLength: 255 },
         reason: { type: ['string', 'null'], maxLength: 255 },
         metadata: { type: ['object', 'array', 'null'] },
         banned_at: { type: 'string' },

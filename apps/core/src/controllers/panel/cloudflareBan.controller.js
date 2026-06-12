@@ -21,6 +21,7 @@ export const fetch = async (req, res) => {
         query.where(builder => {
             builder.where('ip', 'like', `%${search}%`)
                 .orWhere('source_server', 'like', `%${search}%`)
+                .orWhere('client_email', 'like', `%${search}%`)
                 .orWhere('reason', 'like', `%${search}%`);
         });
     }

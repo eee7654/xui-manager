@@ -53,6 +53,12 @@ const CloudflareBansClient = () => {
             render: (value) => <span className="text-textMuted">{value || '-'}</span>
         },
         {
+            title: dict.cloudflareBans.table.client,
+            dataIndex: 'client_email',
+            key: 'client_email',
+            render: (value) => <span className="text-textMuted font-mono">{value || '-'}</span>
+        },
+        {
             title: dict.cloudflareBans.table.bannedAt,
             dataIndex: 'banned_at',
             key: 'banned_at',

@@ -222,12 +222,24 @@ export const formatSqlDateTime = (date = new Date()) => {
     return date.toISOString().slice(0, 19).replace('T', ' ');
 };
 
-export const recordBannedIps = async ({ ips, source_server, reason, metadata, duration_minutes }) => {
+const normalizeClientEmail = (value) => {
+    const normalized = String(value || '').trim();
+    return normalized || null;
+};
+
+export const recordBannedIps = async ({ ips, source_server, client_email, reason, metadata, duration_minutes }) => {
     const normalizedIps = validateIpList(ips);
     const now = new Date();
     const durationMinutes = Number(duration_minutes) || minutesFromEnv('CLOUDFLARE_BAN_DURATION_MINUTES', 24 * 60);
     const expiresAt = new Date(now.getTime() + durationMinutes * 60 * 1000);
     const safeMetadata = metadata && typeof metadata === 'object' ? metadata : null;
+    const detectedClientEmail = normalizeClientEmail(
+        client_email
+        || safeMetadata?.client_email
+        || safeMetadata?.clientEmail
+        || safeMetadata?.email
+        || safeMetadata?.user
+    );
     const rows = [];
 
     for (const ip of normalizedIps) {
@@ -235,6 +247,7 @@ export const recordBannedIps = async ({ ips, source_server, reason, metadata, du
         const payload = {
             ip,
             source_server: source_server || null,
+            client_email: detectedClientEmail,
             reason: reason || null,
             metadata: safeMetadata,
             banned_at: formatSqlDateTime(now),
@@ -272,6 +285,7 @@ export const syncCloudflareBanList = async () => {
         ip: row.ip,
         comment: [
             row.source_server && `server=${row.source_server}`,
+            row.client_email && `client=${row.client_email}`,
             row.reason && `reason=${row.reason}`,
             row.expires_at && `until=${row.expires_at}`
         ].filter(Boolean).join(' ')

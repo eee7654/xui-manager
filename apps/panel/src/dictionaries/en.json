@@ -443,6 +443,7 @@
     "table": {
       "ip": "IP address",
       "source": "Source server",
+      "client": "Client",
       "bannedAt": "Banned at",
       "expiresAt": "Unban at",
       "status": "Status"

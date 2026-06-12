@@ -24,6 +24,7 @@ export const create = async (req, res) => {
         const rows = await recordBannedIps({
             ips,
             source_server: req.body?.source_server || req.body?.server || null,
+            client_email: req.body?.client_email || req.body?.clientEmail || req.body?.email || null,
             reason: req.body?.reason || null,
             metadata: req.body?.metadata || null,
             duration_minutes: req.body?.duration_minutes
