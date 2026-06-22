@@ -35,6 +35,18 @@ export const useStats = (filters) => {
     });
 };
 
+export const useRunAccounting = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: () => fetcher({
+            method: 'POST',
+            url: '/api/v1/panel/xui-clients/usage/run'
+        }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [...XUI_CLIENT_KEYS.all, 'stats'] });
+        }
+    });
+};
 export const useCreate = () => {
     const queryClient = useQueryClient();
     return useMutation({

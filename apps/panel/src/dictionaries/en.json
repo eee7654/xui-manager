@@ -40,6 +40,7 @@
     "XUI_SERVER_CAPACITY_EXHAUSTED": "No active XUI server has free capacity for a new client.",
     "XUI_CLIENT_NOT_FOUND": "The requested XUI client was not found.",
     "XUI_WRITE_LOCK_TIMEOUT": "Another write is still running for this inbound. Please try again shortly.",
+    "XUI_SELLER_REQUIRED": "The selected user does not have the seller role.",
     "INVALID_PASSWORD": "The current password is incorrect.",
     "AUTH_SESSION_EXPIRED": "Your session has expired. Please log in again to continue.",
 
@@ -57,7 +58,9 @@
     "XUI_SERVER_UPDATED_SUCCESSFULLY": "XUI server successfully updated.",
     "XUI_CLIENT_CREATED_SUCCESSFULLY": "XUI client successfully created.",
     "XUI_CLIENT_UPDATED_SUCCESSFULLY": "XUI client successfully updated.",
-    "XUI_CLIENT_DELETED_SUCCESSFULLY": "XUI client successfully deleted."
+    "XUI_CLIENT_DELETED_SUCCESSFULLY": "XUI client successfully deleted.",
+    "XUI_USAGE_ACCOUNTING_COMPLETED": "Usage accounting completed successfully.",
+    "XUI_USAGE_PERIOD_RESET_SUCCESSFULLY": "Seller usage period reset successfully."
   },
   "pages": {
     "home": "Home",
@@ -118,6 +121,7 @@
       "activeClients": "Active clients",
       "expiredClients": "Expired clients",
       "totalUsage": "Total usage",
+      "periodUsage": "Active period usage",
       "serverErrors": "Some servers could not be loaded"
     },
     "adminStats": {
@@ -127,6 +131,8 @@
       "expiredClients": "Expired clients",
       "totalUsage": "Total usage",
       "serverTraffic": "Traffic by server",
+      "runAccounting": "Run accounting now",
+      "accountingComplete": "Accounting completed. New usage: {usage}",
       "serverErrors": "Some servers could not be loaded",
       "table": {
         "server": "Server",
@@ -299,7 +305,11 @@
       "activate": "Activate User",
       "changeStatus": "Are you sure about the {status} of this user?",
       "successCreate": "New User Created Successfully ",
-      "successEdit": "User information successfully updated"
+      "successEdit": "User information successfully updated",
+      "resetUsage": "Reset usage period",
+      "resetUsageTitle": "Reset seller usage period",
+      "resetUsageConfirm": "Close the current accounting period and start a new one? This does not reset traffic on XUI servers.",
+      "resetUsageSuccess": "A new seller usage period was started successfully"
     },
     "empty": "No users found in this organization."
   },

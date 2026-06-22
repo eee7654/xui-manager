@@ -21,6 +21,10 @@ import {
     buildInboundLockKey,
     releaseXuiWriteLock
 } from '@/services/xuiWriteLock.service.js';
+import {
+    getActiveSellerUsagePeriod,
+    runXuiUsageAccounting
+} from '@/services/xuiUsageAccounting.service.js';
 
 const isSeller = (req) => req.roleName === 'seller';
 
@@ -246,6 +250,13 @@ export const stats = async (req, res) => {
         }
     }
 
+    const activePeriod = ownerUsername
+        ? await getActiveSellerUsagePeriod(ownerUsername)
+        : null;
+    summary.period_usage = Number(activePeriod?.total_usage || 0);
+    summary.period_started_at = activePeriod?.started_at || null;
+    summary.period_id = activePeriod?.id || null;
+
     res.json({
         data: summary,
         _meta: {
@@ -253,6 +264,21 @@ export const stats = async (req, res) => {
             ownerUsername,
             isSeller: isSeller(req)
         }
+    });
+};
+
+export const runUsageAccounting = async (req, res) => {
+    if (req.roleName !== 'admin') {
+        throw new AppError(403, ErrorCodes.GEN_FORBIDDEN_ACCESS);
+    }
+    const result = await runXuiUsageAccounting({
+        trigger: 'api-test',
+        waitTimeoutMs: 1000
+    });
+    res.json({
+        status: 'ok',
+        code: SuccessCodes.XUI_USAGE_ACCOUNTING_COMPLETED,
+        data: result
     });
 };
 

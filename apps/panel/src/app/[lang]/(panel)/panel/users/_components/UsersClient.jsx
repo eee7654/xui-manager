@@ -24,6 +24,7 @@ const UsersClient = () => {
     const profile = useAtomValue(userAtom)
 
     const { message } = App.useApp();
+    const { mutate: resetXuiUsagePeriod, isPending: isResettingUsage } = UserService.useResetXuiUsagePeriod();
 
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [drawerMode, setDrawerMode] = useState("create");
@@ -60,6 +61,9 @@ const UsersClient = () => {
     });
 
     const isMultiOrg = data?._meta?.isMultiOrg || false;
+    const isSellerRecord = (record) => isMultiOrg
+        ? record.memberships?.some(membership => membership.role?.name === 'seller')
+        : record.role?.name === 'seller';
 
     // دی‌باونس برای سرچ
     useEffect(() => {
@@ -168,12 +172,33 @@ const UsersClient = () => {
                                 </Tooltip>
                             </Can>
                         )}
+                        {ability.can('manage', 'all') && isSellerRecord(record) && (
+                            <Popconfirm
+                                title={dict.users?.actions?.resetUsageTitle}
+                                description={dict.users?.actions?.resetUsageConfirm}
+                                okText={dict.common.yes}
+                                cancelText={dict.common.no}
+                                okButtonProps={{ danger: true, loading: isResettingUsage }}
+                                onConfirm={() => resetXuiUsagePeriod({ id: record.id }, {
+                                    onSuccess: () => message.success(dict.users?.actions?.resetUsageSuccess)
+                                })}
+                            >
+                                <Tooltip title={dict.users?.actions?.resetUsage}>
+                                    <Button
+                                        type="text"
+                                        size="large"
+                                        className="!text-textBase !bg-warning"
+                                        icon={<i className="bi bi-arrow-counterclockwise grid" />}
+                                    />
+                                </Tooltip>
+                            </Popconfirm>
+                        )}
                     </Space>
                 )
             }
         ];
         return baseColumns;
-    }, [dict, ability, isMultiOrg]);
+    }, [dict, ability, isMultiOrg, isResettingUsage, message, resetXuiUsagePeriod]);
 
     return (
         <div className="container mx-auto px-4 py-6 z-[1] h-full">

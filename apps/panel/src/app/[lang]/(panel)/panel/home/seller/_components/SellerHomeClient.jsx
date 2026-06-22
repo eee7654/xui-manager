@@ -61,6 +61,12 @@ const SellerHomeClient = () => {
             title: dict.home.sellerStats.totalUsage,
             value: formatBytes(stats.total_usage),
             icon: 'bi-activity'
+        },
+        {
+            key: 'periodUsage',
+            title: dict.home.sellerStats.periodUsage,
+            value: formatBytes(stats.period_usage),
+            icon: 'bi-calendar-range'
         }
     ];
 

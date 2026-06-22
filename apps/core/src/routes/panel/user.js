@@ -9,6 +9,8 @@ router.get('/', checkPermission('read', 'User'), userCont.fetch)
 
 router.post('/', checkPermission('create', 'User'), userCont.create)
 
+router.post('/:id/reset-xui-usage', checkPermission('update', 'User'), userCont.resetXuiUsagePeriod);
+
 router.patch('/:id', userCont.updateUser);
 
 router.post('/update', userCont.updateProfile);

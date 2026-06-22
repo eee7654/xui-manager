@@ -1,6 +1,6 @@
 "use client";
 
-import { Alert, Card, Col, Row, Skeleton, Statistic, Table } from "antd";
+import { Alert, App, Button, Card, Col, Flex, Row, Skeleton, Statistic, Table } from "antd";
 import { useAtomValue } from "jotai";
 import { dictAtom } from "@/store/i18nAtom";
 import * as XuiClientService from "@/services/xuiClients.service";
@@ -17,7 +17,9 @@ const formatBytes = (value) => {
 
 const AdminHomeClient = () => {
     const dict = useAtomValue(dictAtom);
+    const { message } = App.useApp();
     const { data, isLoading, error } = XuiClientService.useStats();
+    const { mutate: runAccounting, isPending: isRunningAccounting } = XuiClientService.useRunAccounting();
     const stats = data?.data || {};
     const serverErrors = data?._meta?.errors || [];
 
@@ -121,6 +123,20 @@ const AdminHomeClient = () => {
 
     return (
         <div className="container mx-auto px-4 py-6 z-[1]">
+            <Flex justify="flex-end" className="mb-4">
+                <Button
+                    type="primary"
+                    icon={<i className="bi bi-play-circle" />}
+                    loading={isRunningAccounting}
+                    onClick={() => runAccounting(undefined, {
+                        onSuccess: (result) => message.success(
+                            dict.home.adminStats.accountingComplete.replace('{usage}', formatBytes(result?.data?.total_usage_delta))
+                        )
+                    })}
+                >
+                    {dict.home.adminStats.runAccounting}
+                </Button>
+            </Flex>
             {serverErrors.length > 0 && (
                 <Alert
                     className="mb-4"

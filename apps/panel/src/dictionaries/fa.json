@@ -40,6 +40,7 @@
     "XUI_SERVER_CAPACITY_EXHAUSTED": "هیچ سرور XUI فعالی ظرفیت آزاد برای کلاینت جدید ندارد.",
     "XUI_CLIENT_NOT_FOUND": "کلاینت XUI مورد نظر یافت نشد.",
     "XUI_WRITE_LOCK_TIMEOUT": "یک عملیات نوشتن دیگر روی این اینباند در حال انجام است. کمی بعد دوباره تلاش کنید.",
+    "XUI_SELLER_REQUIRED": "کاربر انتخاب‌شده نقش فروشنده ندارد.",
     
     "INVALID_PASSWORD": "رمز عبور فعلی اشتباه است.",
     "AUTH_SESSION_EXPIRED": "نشست کاربری شما پایان یافته است. لطفا برای ادامه دوباره وارد شوید.",
@@ -58,7 +59,9 @@
     "XUI_SERVER_UPDATED_SUCCESSFULLY": "سرور XUI با موفقیت به‌روزرسانی شد.",
     "XUI_CLIENT_CREATED_SUCCESSFULLY": "کلاینت XUI با موفقیت ایجاد شد.",
     "XUI_CLIENT_UPDATED_SUCCESSFULLY": "کلاینت XUI با موفقیت به‌روزرسانی شد.",
-    "XUI_CLIENT_DELETED_SUCCESSFULLY": "کلاینت XUI با موفقیت حذف شد."
+    "XUI_CLIENT_DELETED_SUCCESSFULLY": "کلاینت XUI با موفقیت حذف شد.",
+    "XUI_USAGE_ACCOUNTING_COMPLETED": "محاسبه مصرف با موفقیت انجام شد.",
+    "XUI_USAGE_PERIOD_RESET_SUCCESSFULLY": "دوره مصرف فروشنده با موفقیت بازنشانی شد."
   },
   "pages": {
     "home": "حساب کاربری",
@@ -122,6 +125,7 @@
       "activeClients": "کلاینت‌های فعال",
       "expiredClients": "کلاینت‌های منقضی",
       "totalUsage": "مصرف کل",
+      "periodUsage": "مصرف دوره فعال",
       "serverErrors": "برخی سرورها بارگذاری نشدند"
     },
     "adminStats": {
@@ -131,6 +135,8 @@
       "expiredClients": "کلاینت‌های منقضی",
       "totalUsage": "مصرف کل",
       "serverTraffic": "ترافیک بر اساس سرور",
+      "runAccounting": "اجرای محاسبه مصرف",
+      "accountingComplete": "محاسبه انجام شد. مصرف جدید: {usage}",
       "serverErrors": "برخی سرورها بارگذاری نشدند",
       "table": {
         "server": "سرور",
@@ -304,7 +310,11 @@
       "activate": "فعال‌سازی کاربر",
       "changeStatus": "آیا از {status} این کاربر اطمینان دارید؟",
       "successCreate": "کاربر جدید با موفقیت ایجاد شد",
-      "successEdit": "اطلاعات کاربر با موفقیت بروزرسانی شد"
+      "successEdit": "اطلاعات کاربر با موفقیت بروزرسانی شد",
+      "resetUsage": "بازنشانی دوره مصرف",
+      "resetUsageTitle": "بازنشانی دوره مصرف فروشنده",
+      "resetUsageConfirm": "دوره حسابداری فعلی بسته و یک دوره جدید شروع شود؟ این کار ترافیک سرورهای XUI را بازنشانی نمی‌کند.",
+      "resetUsageSuccess": "دوره جدید مصرف فروشنده با موفقیت آغاز شد"
     },
     "empty": "هیچ کاربری در این سازمان یافت نشد."
   },

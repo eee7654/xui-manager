@@ -8,6 +8,8 @@ router.get('/', checkPermission('read', 'XuiClient'), xuiClientCont.fetch);
 
 router.get('/stats', checkPermission('read', 'XuiClient'), xuiClientCont.stats);
 
+router.post('/usage/run', checkPermission('manage', 'XuiClient'), xuiClientCont.runUsageAccounting);
+
 router.post('/', checkPermission('create', 'XuiClient'), xuiClientCont.create);
 
 router.patch('/:serverId/:clientId', checkPermission('update', 'XuiClient'), xuiClientCont.update);

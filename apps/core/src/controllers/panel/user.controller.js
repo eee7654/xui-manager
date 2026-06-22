@@ -7,6 +7,7 @@ import UserOrganizationRole from '@/db/models/core/UserOrganizationRole';
 import { AppError } from "@/lib/AppError";
 import { permittedFieldsOf } from '@casl/ability/extra';
 import { ForbiddenError, subject } from '@casl/ability';
+import { isSellerUser, resetSellerUsagePeriod } from '@/services/xuiUsageAccounting.service.js';
 
 export const updateProfile = async (req, res) => {
     const { name, currentPassword, newPassword, avatar } = req.body;
@@ -226,4 +227,23 @@ export const create = async (req, res) => {
         }
         throw error;
     }
+};
+export const resetXuiUsagePeriod = async (req, res) => {
+    if (req.roleName !== 'admin') {
+        throw new AppError(403, ErrorCodes.GEN_FORBIDDEN_ACCESS);
+    }
+    const targetUser = await User.query().findById(req.params.id);
+    if (!targetUser) throw new AppError(404, ErrorCodes.USER_NOT_FOUND);
+    if (!await isSellerUser(targetUser.id, req.orgId)) {
+        throw new AppError(400, ErrorCodes.XUI_SELLER_REQUIRED);
+    }
+    const result = await resetSellerUsagePeriod({
+        sellerUser: targetUser,
+        resetByUserId: req.user.id
+    });
+    res.json({
+        status: 'ok',
+        code: SuccessCodes.XUI_USAGE_PERIOD_RESET_SUCCESSFULLY,
+        data: result
+    });
 };

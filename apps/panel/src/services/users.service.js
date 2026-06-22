@@ -74,3 +74,16 @@ export const useSuspend = () => {
         }
     });
 };
+export const useResetXuiUsagePeriod = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ id }) => fetcher({
+            method: 'POST',
+            url: `/api/v1/panel/users/${id}/reset-xui-usage`
+        }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: USER_KEYS.lists() });
+            queryClient.invalidateQueries({ queryKey: ['xui-clients', 'stats'] });
+        }
+    });
+};

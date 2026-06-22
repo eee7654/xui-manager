@@ -9,6 +9,7 @@ import rateLimit from 'express-rate-limit';
 
 import { routeHandler } from '@/routes';
 import { startCloudflareBanSyncScheduler } from '@/services/cloudflare.service.js';
+import { startXuiUsageAccountingScheduler } from '@/services/xuiUsageAccounting.service.js';
 
 var allowedOrigins = [process.env.DASHBOARD_URL || "http://localhost:3000"]
 
@@ -57,6 +58,7 @@ if (cluster.isPrimary) {
     const PORT = parseInt(process.env.WORKER_PORT, 10);
     if (PORT === BASE_PORT) {
         startCloudflareBanSyncScheduler();
+        startXuiUsageAccountingScheduler();
     }
 
     const coreHandler = async (req, res) => {
