@@ -15,6 +15,14 @@ import * as UserService from "@/services/users.service";
 import { toPascalCase } from '@/utils/converters';
 import UserFormDrawer from './UserFormDrawer';
 import ErrComp from '@/components/ui/ErrComp';
+const formatBytes = (value) => {
+    const bytes = Number(value || 0);
+    if (bytes <= 0) return '0 B';
+    const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+    const index = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
+    const amount = bytes / Math.pow(1024, index);
+    return `${amount.toFixed(amount >= 10 || index === 0 ? 0 : 1)} ${units[index]}`;
+};
 
 const UsersClient = () => {
     const dict = useAtomValue(dictAtom);
@@ -122,6 +130,15 @@ const UsersClient = () => {
                     </Tag>
                 )
             }]),
+            {
+                title: dict.users?.table?.periodUsage,
+                dataIndex: 'xui_period_usage',
+                key: 'xui_period_usage',
+                align: 'center',
+                render: (value, record) => isSellerRecord(record)
+                    ? <span className="font-mono text-textBase">{formatBytes(value)}</span>
+                    : <span className="text-textMuted">-</span>
+            },
             {
                 title: dict.users?.table?.status,
                 dataIndex: 'is_active',

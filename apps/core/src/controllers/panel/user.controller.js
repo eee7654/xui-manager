@@ -4,6 +4,7 @@ import Role from "@/db/models/core/Role";
 import User from "@/db/models/core/User";
 import Organization from '@/db/models/core/Organization';
 import UserOrganizationRole from '@/db/models/core/UserOrganizationRole';
+import XuiSellerUsagePeriod from '@/db/models/core/XuiSellerUsagePeriod.js';
 import { AppError } from "@/lib/AppError";
 import { permittedFieldsOf } from '@casl/ability/extra';
 import { ForbiddenError, subject } from '@casl/ability';
@@ -150,8 +151,45 @@ export const fetch = async (req, res) => {
         });
     }
     const result = await query.page(safePage - 1, safeLimit);
+    const userIds = result.results.map(user => user.id).filter(Boolean);
+    const usernames = result.results
+        .flatMap(user => [user.username, user.displayUsername])
+        .filter(Boolean);
+    const activePeriods = (userIds.length || usernames.length)
+        ? await XuiSellerUsagePeriod.query()
+            .where('is_active', true)
+            .where(builder => {
+                if (userIds.length) builder.whereIn('seller_user_id', userIds);
+                if (usernames.length) {
+                    const method = userIds.length ? 'orWhereIn' : 'whereIn';
+                    builder[method]('seller_username', usernames);
+                }
+            })
+            .orderBy('id', 'desc')
+        : [];
+    const periodByUserId = new Map();
+    const periodByUsername = new Map();
+    for (const period of activePeriods) {
+        if (period.seller_user_id && !periodByUserId.has(String(period.seller_user_id))) {
+            periodByUserId.set(String(period.seller_user_id), period);
+        }
+        if (period.seller_username && !periodByUsername.has(String(period.seller_username))) {
+            periodByUsername.set(String(period.seller_username), period);
+        }
+    }
+    const usersWithUsage = result.results.map(user => {
+        const data = user.toJSON ? user.toJSON() : user;
+        const period = periodByUserId.get(String(user.id))
+            || periodByUsername.get(String(user.username || ''))
+            || periodByUsername.get(String(user.displayUsername || ''));
+        return {
+            ...data,
+            xui_period_usage: Number(period?.total_usage || 0),
+            xui_period_started_at: period?.started_at || null
+        };
+    });
     res.json({
-        data: result.results,
+        data: usersWithUsage,
         total: result.total,
         page: safePage,
         limit: safeLimit,

@@ -264,6 +264,7 @@
     "table": {
       "name": "First and last name",
       "role": "Role",
+      "periodUsage": "Active period usage",
       "status": "Status",
       "actions": "Operations"
     },

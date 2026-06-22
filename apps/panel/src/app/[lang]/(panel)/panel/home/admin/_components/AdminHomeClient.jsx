@@ -19,9 +19,6 @@ const AdminHomeClient = () => {
     const dict = useAtomValue(dictAtom);
     const { message } = App.useApp();
     const { data, isLoading, error } = XuiClientService.useStats();
-    const { mutate: runAccounting, isPending: isRunningAccounting } = XuiClientService.useRunAccounting();
-    const stats = data?.data || {};
-    const serverErrors = data?._meta?.errors || [];
 
     if (isLoading) {
         return (
@@ -123,29 +120,7 @@ const AdminHomeClient = () => {
 
     return (
         <div className="container mx-auto px-4 py-6 z-[1]">
-            <Flex justify="flex-end" className="mb-4">
-                <Button
-                    type="primary"
-                    icon={<i className="bi bi-play-circle" />}
-                    loading={isRunningAccounting}
-                    onClick={() => runAccounting(undefined, {
-                        onSuccess: (result) => message.success(
-                            dict.home.adminStats.accountingComplete.replace('{usage}', formatBytes(result?.data?.total_usage_delta))
-                        )
-                    })}
-                >
-                    {dict.home.adminStats.runAccounting}
-                </Button>
-            </Flex>
-            {serverErrors.length > 0 && (
-                <Alert
-                    className="mb-4"
-                    type="warning"
-                    showIcon
-                    message={dict.home.adminStats.serverErrors}
-                    description={serverErrors.map(item => `${convertEmojiShortcodes(item.server_name)}: ${item.code}`).join(' | ')}
-                />
-            )}
+            
             <Row gutter={[16, 16]}>
                 {cards.map(card => (
                     <Col xs={24} sm={12} xl={card.key === 'usage' ? 24 : 6} key={card.key}>
