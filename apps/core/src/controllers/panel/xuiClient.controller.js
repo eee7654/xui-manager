@@ -83,6 +83,7 @@ const normalizeClientPayload = (payload = {}) => {
     for (const field of allowedFields) {
         if (payload[field] !== undefined) data[field] = payload[field];
     }
+    if (data.email !== undefined) data.email = String(data.email).trim();
     if (!data.id) data.id = randomUUID();
     if (data.enable === undefined) data.enable = true;
     if (payload.quota_gb !== undefined) {
@@ -285,12 +286,16 @@ export const runUsageAccounting = async (req, res) => {
 export const create = async (req, res) => {
     const ownerUsername = getRequestedOwnerUsername(req) || getSellerUsername(req);
     const baseClient = normalizeClientPayload(req.body);
+    if (!baseClient.email) {
+        throw new AppError(422, ErrorCodes.GEN_VALIDATION_FAILED);
+    }
     ForbiddenError.from(req.ability).throwUnlessCan('create', subject('XuiClient', {
         ...baseClient,
         owner_username: ownerUsername
     }));
 
     const servers = await getActiveServers(req.body.server_id);
+    let hasEmailConflict = false;
     for (const server of servers) {
         let lock = null;
         try {
@@ -313,11 +318,20 @@ export const create = async (req, res) => {
                     inbound_tag: server.inbound_tag
                 }
             });
+        } catch (error) {
+            if (error?.code === 'XUI_CLIENT_EMAIL_EXISTS') {
+                hasEmailConflict = true;
+                continue;
+            }
+            throw error;
         } finally {
             await releaseXuiWriteLock(lock);
         }
     }
 
+    if (hasEmailConflict) {
+        throw new AppError(409, ErrorCodes.XUI_CLIENT_EMAIL_EXISTS);
+    }
     throw new AppError(409, ErrorCodes.XUI_SERVER_CAPACITY_EXHAUSTED);
 };
 

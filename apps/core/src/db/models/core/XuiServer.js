@@ -8,7 +8,7 @@ class XuiServer extends DefaultModel {
   static get jsonSchema() {
     return {
       type: 'object',
-      required: ['name', 'panel_domain', 'username', 'password', 'inbound_id'],
+      required: ['name', 'panel_domain', 'inbound_id'],
       properties: {
         id: { type: ['integer', 'string'] },
         name: { type: 'string', minLength: 1, maxLength: 255 },
@@ -17,8 +17,10 @@ class XuiServer extends DefaultModel {
         subscription_port: { type: ['integer', 'null'] },
         panel_path: { type: 'string', minLength: 1, maxLength: 255 },
         panel_ssl: { type: ['boolean', 'integer'] },
-        username: { type: 'string', minLength: 1, maxLength: 255 },
-        password: { type: 'string', minLength: 1 },
+        api_mode: { type: 'string', enum: ['legacy_session', 'token_v3'] },
+        api_token: { type: ['string', 'null'] },
+        username: { type: ['string', 'null'], maxLength: 255 },
+        password: { type: ['string', 'null'] },
         inbound_id: { type: ['integer', 'string'] },
         inbound_tag: { type: ['string', 'null'], maxLength: 255 },
         max_clients: { type: ['integer', 'string'] },
@@ -36,7 +38,7 @@ class XuiServer extends DefaultModel {
   }
 
   static get secretColumns() {
-    return ['password', 'cloudflare_clearance'];
+    return ['password', 'api_token', 'cloudflare_clearance'];
   }
 
   static get publicColumns() {

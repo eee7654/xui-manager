@@ -11,6 +11,8 @@ const writableFields = [
     'subscription_port',
     'panel_path',
     'panel_ssl',
+    'api_mode',
+    'api_token',
     'username',
     'password',
     'inbound_id',
@@ -28,6 +30,8 @@ const writableFields = [
 const sanitizeServer = (server) => {
     if (!server) return server;
     const data = typeof server.toJSON === 'function' ? server.toJSON() : { ...server };
+    data.has_api_token = Boolean(data.api_token);
+    data.has_password = Boolean(data.password);
     for (const column of XuiServer.secretColumns) {
         delete data[column];
     }
@@ -50,12 +54,24 @@ const normalizePayload = (payload) => {
         data.panel_path = rawPath.startsWith('/') ? rawPath : `/${rawPath}`;
     }
     if (data.password === '') delete data.password;
+    if (data.api_token === '') delete data.api_token;
+    if (data.username === '') data.username = null;
     if (data.cloudflare_clearance === '') data.cloudflare_clearance = null;
     if (data.cloudflare_user_agent === '') data.cloudflare_user_agent = null;
     if (data.proxy_url === '') data.proxy_url = null;
     return data;
 };
 
+const validateCredentials = (data) => {
+    const apiMode = data.api_mode || 'legacy_session';
+    if (apiMode === 'token_v3') {
+        if (!data.api_token) throw new AppError(400, ErrorCodes.GEN_VALIDATION_FAILED);
+        return;
+    }
+    if (!data.username || !data.password) {
+        throw new AppError(400, ErrorCodes.GEN_VALIDATION_FAILED);
+    }
+};
 const getAllowedPublicFields = (ability) => {
     let allowedFields = permittedFieldsOf(ability, 'read', 'XuiServer', {
         fieldsFrom: rule => rule.fields || XuiServer.publicColumns
@@ -72,7 +88,11 @@ export const fetch = async (req, res) => {
     const safePage = Math.max(Number(page) || 1, 1);
     const allowedFields = getAllowedPublicFields(req.ability);
     const query = XuiServer.query()
-        .select(XuiServer.attachPrefix(allowedFields))
+        .select([
+            ...XuiServer.attachPrefix(allowedFields),
+            'xui_servers.api_token',
+            'xui_servers.password'
+        ])
         .accessibleBy(req.ability, 'read')
         .orderBy('created_at', 'desc');
     if (search) {
@@ -94,10 +114,13 @@ export const fetch = async (req, res) => {
 
 export const create = async (req, res) => {
     const serverData = normalizePayload(req.body);
+    if (serverData.api_mode === 'legacy_session') serverData.api_token = null;
+    validateCredentials(serverData);
     ForbiddenError.from(req.ability).throwUnlessCan('create', subject('XuiServer', serverData));
     const newServer = await XuiServer.query().insertAndFetch({
         panel_path: '/',
         panel_ssl: true,
+        api_mode: 'legacy_session',
         max_clients: 0,
         is_active: true,
         comment_key: '@',
@@ -117,6 +140,8 @@ export const update = async (req, res) => {
     if (!existingServer) throw new AppError(404, ErrorCodes.XUI_SERVER_NOT_FOUND);
     ForbiddenError.from(req.ability).throwUnlessCan('update', subject('XuiServer', existingServer));
     const updateData = normalizePayload(req.body);
+    if (updateData.api_mode === 'legacy_session') updateData.api_token = null;
+    validateCredentials({ ...existingServer.toJSON(), ...updateData });
     delete updateData.id;
     delete updateData.created_at;
     delete updateData.updated_at;
